@@ -1,15 +1,10 @@
 function Header() {
   return (
-    <header className="h-16 bg-white shadow flex items-center justify-between px-6">
-      {/* Tiêu đề */}
-      <h1 className="text-xl font-semibold text-gray-800">
-        TDS
-      </h1>
+    <header className="h-20 bg-linear-to-r from-[#ff0000] to-[#c40003] shadow flex items-center justify-end px-6">
 
       {/* Thông tin user (demo) */}
       <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-600">Ngọc Ánh</span>
-        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm">
+        <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white text-sm">
           A
         </div>
       </div>
