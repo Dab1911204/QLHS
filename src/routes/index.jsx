@@ -1,4 +1,5 @@
 import Layout from "../layout/Layout";
+import ClientLogin from "../page/Auth";
 import DocumentsPage from "../page/Documents";
 import DocumentsList from "../page/Documents/DocumentsList";
 import HomePage from "../page/Home";
@@ -25,5 +26,11 @@ export const router = [
       }
     ]
   },
+
+  //Login
+  {
+    path: "/login",
+    element:<ClientLogin/>,
+  }
 
 ];

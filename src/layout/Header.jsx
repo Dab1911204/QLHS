@@ -4,7 +4,8 @@ function Header() {
 
       {/* Thông tin user (demo) */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white text-sm">
+        <h2 className="text-white">Lê Thị Ngọc Ánh</h2>
+        <div className="w-12 h-12 rounded-full bg-gray-500 flex items-center justify-center text-white text-sm">
           A
         </div>
       </div>

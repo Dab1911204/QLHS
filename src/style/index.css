@@ -77,3 +77,17 @@ h1 {
 .toggle-slider {
   @apply flex w-[200%] h-full transition-transform duration-500 ease-in-out;
 }
+
+/* panel chung */
+.toggle-panel {
+  @apply w-1/2 h-full flex items-center justify-center;
+}
+
+/* trạng thái */
+.toggle-left {
+  @apply translate-x-0;
+}
+
+.toggle-right {
+  @apply -translate-x-1/2;
+}
