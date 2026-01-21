@@ -3,6 +3,7 @@ import ClientLogin from "../page/Auth";
 import DocumentsPage from "../page/Documents";
 import DocumentsList from "../page/Documents/DocumentsList";
 import EmployeesPage from "../page/Employee";
+import AttendanceList from "../page/Employee/AttendanceList";
 import EmployeesList from "../page/Employee/EmployeesList";
 import HomePage from "../page/Home";
 
@@ -34,6 +35,10 @@ export const router = [
             index: true,
             element: <EmployeesList />,
           },
+          {
+            path: "attendance",
+            element: <AttendanceList />,
+          }
         ]
       }
     ]

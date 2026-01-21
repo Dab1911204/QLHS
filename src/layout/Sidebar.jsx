@@ -17,7 +17,7 @@ const initialMenuItems = [
     icon: <MdOutlineCategory size={15} />,
     children: [
       { name: "Danh sách nhân sự", path: "/employees" },
-      { name: "Chấm công", path: "/employees/add" },
+      { name: "Chấm công", path: "/employees/attendance" },
     ],
   },
 ];
