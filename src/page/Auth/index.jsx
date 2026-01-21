@@ -94,13 +94,17 @@ const ClientLogin = () => {
                 </div>
               </div>
 
-              {/* Remember me */}
-              <div className="flex items-center gap-2 mb-6 text-sm text-gray-600">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span>Nhớ mật khẩu</span>
+              <div className="mb-4">
+                <div
+                  className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300
+                            focus-within:outline-2 focus-within:outline-indigo-600"
+                >
+                  <input
+                    type="password"
+                    placeholder="Nhập lại mật khẩu"
+                    className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  />
+                </div>
               </div>
 
               {/* Button */}

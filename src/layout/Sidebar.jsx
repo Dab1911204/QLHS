@@ -13,11 +13,11 @@ const initialMenuItems = [
     path: "/documents"
   },
   {
-    name: "Quản lý danh mục",
+    name: "Quản lý nhân sự",
     icon: <MdOutlineCategory size={15} />,
     children: [
-      { name: "Danh sách danh mục", path: "/categories" },
-      { name: "Thêm danh mục", path: "/categories/add" },
+      { name: "Danh sách nhân sự", path: "/employees" },
+      { name: "Chấm công", path: "/employees/add" },
     ],
   },
 ];

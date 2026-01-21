@@ -2,6 +2,8 @@ import Layout from "../layout/Layout";
 import ClientLogin from "../page/Auth";
 import DocumentsPage from "../page/Documents";
 import DocumentsList from "../page/Documents/DocumentsList";
+import EmployeesPage from "../page/Employee";
+import EmployeesList from "../page/Employee/EmployeesList";
 import HomePage from "../page/Home";
 
 export const router = [
@@ -21,6 +23,16 @@ export const router = [
           {
             index: true,
             element: <DocumentsList />,
+          },
+        ]
+      },
+      {
+        path: "employees",
+        element: <EmployeesPage />,
+        children: [
+          {
+            index: true,
+            element: <EmployeesList />,
           },
         ]
       }
