@@ -2,7 +2,7 @@ import { FaRegEye } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscTools } from "react-icons/vsc";
 
-const EmployeesBody = ({ items, search, handleDelete }) => {
+const EmployeesBody = ({ items, search, handleShowDelete,handleShowDetail,handleShowEdit }) => {
   return (
     <>
       <tbody>
@@ -22,21 +22,21 @@ const EmployeesBody = ({ items, search, handleDelete }) => {
                 </span>
               </td>
               <td className="p-4 space-x-1">
-                <button className="px-2 py-1 rounded-lg text-white bg-sky-500">
+                <button className="px-2 py-1 rounded-lg text-white bg-sky-500 hover:bg-sky-600 cursor-pointer" onClick={() => handleShowDetail(record)}>
                   <div className="flex items-center gap-1">
                     <FaRegEye />
                     <span>Xem</span>
                   </div>
                 </button>
-                <button className="px-2 py-1 rounded-lg text-white bg-yellow-500">
+                <button className="px-2 py-1 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 cursor-pointer" onClick={() => handleShowEdit(record)}>
                   <div className="flex items-center gap-1">
                     <VscTools />
                     <span>Sửa</span>
                   </div>
                 </button>
                 <button
-                  onClick={() => handleDelete(record.id)}
-                  className="px-2 py-1 bg-red-500 text-white rounded-lg"
+                  onClick={() => handleShowDelete(record)}
+                  className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg cursor-pointer"
                 >
                   <div className="flex items-center gap-1">
                     <RiDeleteBin6Line />

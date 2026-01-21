@@ -1,7 +1,18 @@
 import { useEffect, useRef } from "react";
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose,type, title, children }) => {
   const modalRef = useRef(null);
+
+  let color = "";
+  if(type === "add"){
+    color = "bg-green-400";
+  }else if(type === "detail"){
+    color = "bg-sky-400";
+  }else if(type === "edit"){
+    color = "bg-yellow-400";
+  }else if(type === "delete"){
+    color = "bg-red-400";
+  }
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -21,7 +32,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center p-4 animate-fadeIn bg-white/10"
+      className="fixed inset-0 flex items-center justify-center p-4 animate-fadeIn bg-white/40"
       style={{ zIndex: 1000 }}
       onClick={handleBackdropClick}
     >
@@ -30,7 +41,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         className="w-full max-w-md rounded-2xl shadow-2xl animate-slideUp overflow-hidden"
       >
         {/* Header */}
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className={`px-6 py-4 flex items-center justify-between ${color}`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <svg
@@ -69,7 +80,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           </button>
         </div>
 
-        {children}
+        <div className="bg-white p-6">
+          {children}
+        </div>
       </div>
     </div>
   );

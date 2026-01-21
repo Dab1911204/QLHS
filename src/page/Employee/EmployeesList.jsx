@@ -1,12 +1,20 @@
 import { useState } from "react";
 import Header from "../../components/Tables/Header";
 import EmployeesBody from "../../components/Tables/Body/EmployeesBody";
+import ModelAddEmployee from "../../components/ui/Model/ModelAddEmployee";
+import ModelDetailEmployee from "../../components/ui/Model/ModelDetailEmployee";
+import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
+import ModelDelete from "../../components/ui/Model/ModelDelete";
 
 const titles = ["Mã NV","Họ tên","Vai trò","Ngày bắt đầu","Ngày kết thúc","% tham gia","Trạng thái","Thao tác"]
 
 const EmployeesList = () => {
   const [search, setSearch] = useState("");
   const [showModalAdd, setShowModalAdd] = useState(false);
+  const [showModalDetal, setShowModalDetal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [records, setRecords] = useState([
     {
       id: 1,
@@ -42,21 +50,13 @@ const EmployeesList = () => {
     type: "PDF",
     status: "Đã số hóa",
   });
-
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa hồ sơ này không?")) {
-      setRecords(records.filter((r) => r.id !== id));
-    }
+  
+  const handleShowDelete = (e) => {
+    setShowModalDelete(true);
+    setSelectedEmployee(e);
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmitAdd = (e) => {
     e.preventDefault();
 
     const newRecord = {
@@ -71,6 +71,16 @@ const EmployeesList = () => {
     setFormData({ name: "", type: "PDF", status: "Đã số hóa" });
     setShowModalAdd(false);
   };
+
+  const handleShowEdit = (e) => {
+    setShowModalEdit(true);
+    setSelectedEmployee(e);
+  }
+
+  const handleShowDetail = (e) => {
+    setShowModalDetal(true);
+    setSelectedEmployee(e);
+  }
   return (
     <>
       {/* Search */}
@@ -88,70 +98,25 @@ const EmployeesList = () => {
         <div className="flex justify-start items-center my-4 mx-8">
           <button
             onClick={() => setShowModalAdd(true)}
-            className="bg-[#ff0000] text-white px-4 py-2 rounded-xl hover:bg-[#b70000]"
+            className="bg-[#ff0000] text-white px-4 py-2 rounded-xl hover:bg-[#b70000] cursor-pointer"
           >
             + Thêm nhân sự
           </button>
         </div>
         <table className="w-full">
           <Header titles={titles}/>
-          <EmployeesBody items={records} search={search} handleDelete={handleDelete}/>
+          <EmployeesBody items={records} search={search} handleShowDelete={handleShowDelete} handleShowDetail={handleShowDetail} handleShowEdit={handleShowEdit}/>
         </table>
       </div>
-      {/* Modal */}
-      {showModalAdd && (
-        <div className="fixed inset-0 bg-white/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white w-96 rounded-xl p-6 shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Thêm nhân viên</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Tên hồ sơ"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full border rounded-lg px-3 py-2"
-              />
-
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-3 py-2"
-              >
-                <option>PDF</option>
-                <option>Word</option>
-                <option>Excel</option>
-              </select>
-
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-3 py-2"
-              >
-                <option>Đã số hóa</option>
-                <option>Đang xử lý</option>
-                <option>Lưu trữ</option>
-              </select>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModalAdd(false)}
-                  className="px-4 py-2 border rounded-lg"
-                >
-                  Hủy
-                </button>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-                  Lưu
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ModelAddEmployee isOpen={showModalAdd} onClose={()=>{setShowModalAdd(!showModalAdd)}}/>
+      <ModelDetailEmployee data={selectedEmployee} isOpen={showModalDetal} onClose={()=>{setShowModalDetal(!showModalDetal)}}/>
+      <ModelEditEmployee data={selectedEmployee} isOpen={showModalEdit} onClose={()=>{setShowModalEdit(!showModalEdit)}}/>
+      <ModelDelete 
+        title="Xóa nhân sự" 
+        content = "Bạn có chắc chắn muốn xoá nhân sự này không?" 
+        isOpen={showModalDelete} 
+        onClose={()=>{setShowModalDelete(!showModalDelete)}}
+      />
     </>
   );
 };

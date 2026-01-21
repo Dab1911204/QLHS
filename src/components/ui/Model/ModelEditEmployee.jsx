@@ -1,8 +1,8 @@
 import Modal from "../../common/Model";
 
-const ModelAddEmployee = ({ onClose, isOpen }) => {
+const ModelEditEmployee = ({ onClose, isOpen,data,submit }) => {
   return (
-    <Modal title="Thêm nhân viên mới" onClose={onClose} isOpen={isOpen} type={"add"}>
+    <Modal title="Sửa thông tin nhân viên" onClose={onClose} isOpen={isOpen} type={"edit"}>
       <form className="space-y-4">
         {/* Họ tên */}
         <div>
@@ -71,9 +71,9 @@ const ModelAddEmployee = ({ onClose, isOpen }) => {
 
           <button
             type="button"
-            className="px-4 py-2 border rounded bg-green-400 text-white hover:bg-green-500 cursor-pointer"
+            className="px-4 py-2 border rounded bg-yellow-400 text-white hover:bg-yellow-500 cursor-pointer"
           >
-            Thêm
+            Cập nhật
           </button>
         </div>
       </form>
@@ -81,4 +81,4 @@ const ModelAddEmployee = ({ onClose, isOpen }) => {
   );
 };
 
-export default ModelAddEmployee;
+export default ModelEditEmployee;
