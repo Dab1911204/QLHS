@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AttendanceDetailModal from "../../components/ui/Model/AttendanceDetailModal";
 import CheckInModal from "../../components/ui/Model/CheckInModal";
 import Header from "../../components/Tables/Header";
 import AttendanceBody from "../../components/Tables/Body/AttendanceBody";
+import initialData, {
+  getAllEmployees,
+  getAttendanceByEmployeeId,
+  addAttendance,
+} from "../../data/data";
 
 const hearerLabels = [
   "STT",
   "Họ tên",
-  "Vị trí",
+  "Vai trò",
   "Có mặt",
   "Vắng",
   "Muộn",
@@ -16,124 +21,42 @@ const hearerLabels = [
 ];
 
 const AttendanceList = () => {
+  const [data, setData] = useState(initialData);
   const [search, setSearch] = useState("");
-  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
-  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = useState(12); // Mặc định tháng 12 (dữ liệu hiện tại)
+  const [filterYear, setFilterYear] = useState(2025); // Mặc định năm 2025
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
-  const [currentUser] = useState({
-    id: 1,
-    name: "Nguyễn Văn A",
-    position: "Developer",
-    email: "a@gmail.com",
+  const [currentUser] = useState(() => {
+    const emp = getAllEmployees(initialData)[0];
+    return emp || { id: 1, name: "User", position: "Employee", email: "user@example.com" };
   });
   const [checkInTime, setCheckInTime] = useState("");
   const [checkOutTime, setCheckOutTime] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
-  const [workResults, setWorkResults] = useState([
-    {
-      name: "Giao diện User Dashboard",
-      description: "Thiết kế và phát triển dashboard người dùng",
-      quantity: 1,
-      unit: "module",
-    },
-    {
-      name: "API Authentication",
-      description: "Xây dựng hệ thống xác thực người dùng",
-      quantity: 3,
-      unit: "endpoint",
-    },
-  ]);
 
-  const [employees] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      position: "Developer",
-      email: "a@gmail.com",
-    },
-    {
-      id: 2,
-      name: "Nguyễn Văn B",
-      position: "Designer",
-      email: "b@gmail.com",
-    },
-    {
-      id: 3,
-      name: "Nguyễn Văn C",
-      position: "Product Manager",
-      email: "c@gmail.com",
-    },
-    {
-      id: 4,
-      name: "Trần Thị D",
-      position: "QA",
-      email: "d@gmail.com",
-    },
-  ]);
+  const employees = getAllEmployees(data);
 
-  const [attendanceRecords] = useState([
-    {
-      id: 1,
-      employeeId: 1,
-      date: "2025-01-15",
-      checkIn: "08:00",
-      checkOut: "17:30",
-      status: "present",
-      workHours: 9.5,
-    },
-    {
-      id: 2,
-      employeeId: 1,
-      date: "2025-01-16",
-      checkIn: "08:15",
-      checkOut: "17:45",
-      status: "present",
-      workHours: 9.5,
-    },
-    {
-      id: 3,
-      employeeId: 1,
-      date: "2025-01-17",
-      checkIn: null,
-      checkOut: null,
-      status: "absent",
-      workHours: 0,
-    },
-    {
-      id: 4,
-      employeeId: 2,
-      date: "2025-01-15",
-      checkIn: "08:30",
-      checkOut: "17:00",
-      status: "present",
-      workHours: 8.5,
-    },
-    {
-      id: 5,
-      employeeId: 2,
-      date: "2025-01-16",
-      checkIn: "08:00",
-      checkOut: "17:30",
-      status: "present",
-      workHours: 9.5,
-    },
-  ]);
-
-  const filteredEmployees = employees.filter((emp) =>
-    emp.name.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const getEmployeeAttendance = (employeeId) => {
-    return attendanceRecords.filter(
-      (record) => record.employeeId === employeeId,
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((emp) =>
+      emp.name.toLowerCase().includes(search.toLowerCase()),
     );
+  }, [search, employees]);
+
+  const getEmployeeAttendanceByMonth = (employeeId) => {
+    return getAttendanceByEmployeeId(data, employeeId).filter((record) => {
+      const attDate = new Date(record.date);
+      return (
+        attDate.getMonth() + 1 === filterMonth &&
+        attDate.getFullYear() === filterYear
+      );
+    });
   };
 
-  const getAttendanceStats = (employeeId) => {
-    const records = getEmployeeAttendance(employeeId);
+  const getEmployeeAttendanceStats = (employeeId) => {
+    const records = getEmployeeAttendanceByMonth(employeeId);
     const present = records.filter((r) => r.status === "present").length;
     const absent = records.filter((r) => r.status === "absent").length;
     const late = records.filter((r) => r.status === "late").length;
@@ -160,8 +83,48 @@ const AttendanceList = () => {
       alert("Vui lòng điền đầy đủ thông tin!");
       return;
     }
+
+    // Tính giờ làm từ checkIn và checkOut
+    let workHours = 0;
+    let status = "present";
+
+    if (checkOutTime) {
+      const [inHour, inMin] = checkInTime.split(":").map(Number);
+      const [outHour, outMin] = checkOutTime.split(":").map(Number);
+      workHours = (outHour + outMin / 60) - (inHour + inMin / 60);
+      
+      // Kiểm tra đi muộn (sau 8:30)
+      if (inHour > 8 || (inHour === 8 && inMin > 30)) {
+        status = "late";
+      }
+    } else {
+      // Nếu chưa checkout, tính tạm từ check in đến bây giờ
+      const now = new Date();
+      const [inHour, inMin] = checkInTime.split(":").map(Number);
+      workHours = (now.getHours() + now.getMinutes() / 60) - (inHour + inMin / 60);
+      if (inHour > 8 || (inHour === 8 && inMin > 30)) {
+        status = "late";
+      }
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+    const newAttendance = {
+      employeeId: currentUser.id,
+      date: today,
+      checkIn: checkInTime,
+      checkOut: checkOutTime || null,
+      status,
+      workHours: Math.max(0, Math.round(workHours * 10) / 10), // Làm tròn đến 0.1
+      workDescription,
+      productQuantity: parseInt(productQuantity),
+      unit: "item",
+    };
+
+    const updatedData = addAttendance(data, newAttendance);
+    setData(updatedData);
+
     alert(
-      `Chấm công thành công!\nGiờ vào: ${checkInTime}\nGiờ ra: ${checkOutTime || "Chưa chấm"}\nMô tả: ${workDescription}\nSố lượng sản phẩm: ${productQuantity}`,
+      `✅ Chấm công thành công!\n⏰ Giờ vào: ${checkInTime}\n⏰ Giờ ra: ${checkOutTime || "Chưa chấm"}\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity}\n⌛ Giờ làm: ${newAttendance.workHours}h`,
     );
     setShowCheckInModal(false);
   };
@@ -170,9 +133,10 @@ const AttendanceList = () => {
     <div>
       <div className="min-h-screen">
         <div className="max-w-7xl mx-auto space-y-6">
+
           {/* ===== Bộ lọc ===== */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-8">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Tìm kiếm nhân sự
@@ -220,14 +184,6 @@ const AttendanceList = () => {
                   })}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  &nbsp;
-                </label>
-                <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 font-semibold shadow-md hover:shadow-lg transition">
-                  Xuất báo cáo
-                </button>
-              </div>
             </div>
           </div>
 
@@ -251,7 +207,7 @@ const AttendanceList = () => {
               <Header titles={hearerLabels} />
               <AttendanceBody
                 filteredEmployees={filteredEmployees}
-                getAttendanceStats={getAttendanceStats}
+                getAttendanceStats={getEmployeeAttendanceStats}
                 onViewDetail={handleViewDetail}
               />
             </table>
@@ -263,8 +219,8 @@ const AttendanceList = () => {
             selectedEmployee={selectedEmployee}
             filterMonth={filterMonth}
             filterYear={filterYear}
-            getAttendanceStats={getAttendanceStats}
-            getEmployeeAttendance={getEmployeeAttendance}
+            getAttendanceStats={getEmployeeAttendanceStats}
+            getEmployeeAttendance={getEmployeeAttendanceByMonth}
             onClose={() => setShowDetailModal(false)}
           />
         </div>
@@ -278,7 +234,6 @@ const AttendanceList = () => {
         checkOutTime={checkOutTime}
         workDescription={workDescription}
         productQuantity={productQuantity}
-        workResults={workResults}
         onCheckInTimeChange={setCheckInTime}
         onCheckOutTimeChange={setCheckOutTime}
         onWorkDescriptionChange={setWorkDescription}

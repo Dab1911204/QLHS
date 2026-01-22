@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import Model from "../../common/Model";
+import { getEmployeeRoleByPayroll } from "../../../data/data";
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("vi-VN", {
@@ -8,7 +10,14 @@ const formatCurrency = (value) =>
   }).format(value);
 
 const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
-  if (!isOpen || !payroll) return null;
+
+  // Lấy thông tin nhân viên từ payroll - chỉ cần truyền id
+  const employeeInfo = useMemo(() => {
+    if (!payroll) return null;
+    return getEmployeeRoleByPayroll(payroll.id);
+  }, [payroll]);
+
+  if (!isOpen || !payroll) return null;  
 
   const netSalary = payroll.baseSalary + payroll.bonus - payroll.deduction;
   const isPaid = payroll.status === "Đã thanh toán";
@@ -21,7 +30,6 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
       type="detail"
     >
       <div className="space-y-6 max-h-[80vh] overflow-y-auto pr-1">
-
         {/* ===== Nhân viên ===== */}
         <div className="bg-gray-50 rounded-xl p-5 border">
           <h3 className="text-base font-semibold text-gray-800 mb-4">
@@ -30,9 +38,11 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <Info label="Họ tên" value={payroll.name} />
-            <Info label="Mã NV" value={`#${payroll.id}`} />
-            <Info label="Vị trí" value={payroll.position} />
-            <Info label="Tháng" value={payroll.month} />
+            <Info label="Mã NV" value={`#${payroll.employeeId}`} />
+            <Info label="Vai trò" value={employeeInfo?.role || "N/A"} />
+            <Info label="Email" value={employeeInfo?.email || "N/A"} />
+            <Info label="Tháng lương" value={payroll.month} />
+            <Info label="Trạng thái" value={payroll.status} />
           </div>
         </div>
 
@@ -57,9 +67,7 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
           />
 
           <div className="mt-4 pt-4 border-t flex justify-between items-center">
-            <span className="font-semibold text-gray-800">
-              Lương ròng
-            </span>
+            <span className="font-semibold text-gray-800">Lương ròng</span>
             <span className="text-2xl font-bold text-blue-600">
               {formatCurrency(netSalary)}
             </span>
@@ -72,9 +80,7 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
             <h3 className="text-base font-semibold text-gray-800">
               📌 Trạng thái thanh toán
             </h3>
-            <p className="text-sm text-gray-500">
-              Tình trạng xử lý bảng lương
-            </p>
+            <p className="text-sm text-gray-500">Tình trạng xử lý bảng lương</p>
           </div>
 
           <span

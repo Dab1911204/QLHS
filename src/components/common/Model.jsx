@@ -3,14 +3,14 @@ import { useEffect, useRef } from "react";
 const Model = ({ isOpen, onClose, type, title, children }) => {
   const modalRef = useRef(null);
 
-  let color = "";
-  if (type === "add") color = "bg-green-500";
-  else if (type === "detail") color = "bg-sky-500";
-  else if (type === "edit") color = "bg-yellow-500";
-  else if (type === "delete") color = "bg-red-500";
-  else if (type === "check")
-    color = "bg-gradient-to-r from-green-600 to-emerald-600";
-  else if (type === "rating") color = "bg-purple-500";
+  let color = "bg-[#ff0000]";
+  // if (type === "add") color = "bg-green-500";
+  // else if (type === "detail") color = "bg-sky-500";
+  // else if (type === "edit") color = "bg-yellow-500";
+  // else if (type === "delete") color = "bg-red-500";
+  // else if (type === "check")
+  //   color = "bg-gradient-to-r from-green-600 to-emerald-600";
+  // else if (type === "rating") color = "bg-purple-500";
 
   useEffect(() => {
     const handleEscape = (e) => {

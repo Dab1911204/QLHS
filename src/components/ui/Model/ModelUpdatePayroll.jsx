@@ -1,17 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Model from "../../common/Model";
 
-const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
-  const [rating, setRating] = useState(payroll?.rating || 5);
-  const [comment, setComment] = useState(payroll?.comment || "");
+const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
   const [formData, setFormData] = useState({
-    baseSalary: payroll?.baseSalary || "",
-    bonus: payroll?.bonus || "",
-    deduction: payroll?.deduction || "",
-    status: payroll?.status || "Đang xử lý",
-    rating: payroll?.rating || 5,
-    comment: payroll?.comment || "",
+    baseSalary: "",
+    bonus: "0",
+    deduction: "0",
+    status: "Đang xử lý",
   });
+
+  useEffect(() => {
+    if (payroll && isOpen) {
+      setFormData({
+        baseSalary: payroll.baseSalary || "",
+        bonus: payroll.bonus || "0",
+        deduction: payroll.deduction || "0",
+        status: payroll.status || "Đang xử lý",
+      });
+    }
+  }, [payroll, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,17 +30,24 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle payroll update
-    console.log("Payroll updated:", formData);
-    onClose();
+    
+    if (onUpdate && payroll) {
+      const updatedData = {
+        baseSalary: formData.baseSalary ? parseInt(formData.baseSalary) : 0,
+        bonus: formData.bonus ? parseInt(formData.bonus) : 0,
+        deduction: formData.deduction ? parseInt(formData.deduction) : 0,
+        status: formData.status,
+      };
+      onUpdate(payroll.id, updatedData);
+    }
   };
 
   if (!isOpen || !payroll) return null;
 
   const netSalary =
-    parseInt(formData.baseSalary || 0) +
-    parseInt(formData.bonus || 0) -
-    parseInt(formData.deduction || 0);
+    (formData.baseSalary ? parseInt(formData.baseSalary) : 0) +
+    (formData.bonus ? parseInt(formData.bonus) : 0) -
+    (formData.deduction ? parseInt(formData.deduction) : 0);
 
   return (
     <Model
@@ -42,7 +56,7 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
       title="Cập nhật bảng lương"
       type="edit"
     >
-      <p className="text-gray-600 mb-6">{payroll.name}</p>
+      <p className="text-gray-600 mb-6 font-semibold">Nhân viên: {payroll.name}</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -55,7 +69,6 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
             value={formData.baseSalary}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
           />
         </div>
 
@@ -70,7 +83,6 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
               value={formData.bonus}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
           <div>
@@ -83,7 +95,6 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
               value={formData.deduction}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
         </div>
@@ -114,44 +125,6 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
-            Xếp hạng (1-10)
-          </label>
-          <div className="flex gap-2 mb-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                className={`w-10 h-10 rounded-lg font-semibold transition ${
-                  rating >= star
-                    ? "bg-yellow-400 text-white"
-                    : "bg-gray-200 text-gray-400"
-                }`}
-              >
-                {star}
-              </button>
-            ))}
-          </div>
-          <p className="text-center text-lg font-bold text-yellow-600">
-            Đánh giá: {rating}/10
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nhận xét
-          </label>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Nhập nhận xét về hiệu suất làm việc"
-            rows="4"
-          />
-        </div>
-
         <div className="flex gap-4 mt-8">
           <button
             type="button"
@@ -164,7 +137,7 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll }) => {
             type="submit"
             className="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium transition"
           >
-            Cập nhật
+            ✓ Cập nhật
           </button>
         </div>
       </form>

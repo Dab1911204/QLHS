@@ -5,46 +5,23 @@ import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
 import ModelDelete from "../../components/ui/Model/ModelDelete";
 import Header from "../../components/Tables/Header";
 import EmployeesBody from "../../components/Tables/Body/EmployeesBody";
-import StatCard from "../../components/ui/Card";
+import initialData, {
+  getAllEmployees,
+  addEmployee,
+  updateEmployee,
+  deleteEmployee,
+} from "../../data/data";
 
 const headerLabels = [
   "Mã NV",
   "Họ tên",
   "Vai trò",
-  "% tham gia",
   "Trạng thái",
   "Thao tác",
 ];
-const allRecords = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    type: "Leader",
-    startDate: "01/11/2025",
-    endDate: "01/12/2025",
-    contribution: "100%",
-    status: "Đang tham gia",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    type: "Suport",
-    startDate: "01/11/2025",
-    endDate: "01/12/2025",
-    contribution: "50%",
-    status: "Đang tham gia",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn C",
-    type: "Intern",
-    startDate: "01/11/2025",
-    endDate: "01/12/2025",
-    contribution: "100%",
-    status: "Đang tham gia",
-  },
-];
+
 const EmployeesList = () => {
+  const [data, setData] = useState(initialData);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -53,7 +30,8 @@ const EmployeesList = () => {
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedMember, setSelectedMember] = useState(null);
+
+  const allRecords = getAllEmployees(data);
 
   const records = useMemo(() => {
     return allRecords.filter((record) => {
@@ -61,21 +39,14 @@ const EmployeesList = () => {
         .toLowerCase()
         .includes(search.toLowerCase());
 
-      const matchRole = filterRole === "all" || record.type === filterRole;
+      const matchRole = filterRole === "all" || record.role === filterRole;
 
       const matchStatus =
         filterStatus === "all" || record.status === filterStatus;
 
       return matchSearch && matchRole && matchStatus;
     });
-  }, [search, filterRole, filterStatus]);
-
-  // Tính toán số liệu thống kê
-  const totalMembers = allRecords.length;
-  const activeMembers = allRecords.filter(
-    (r) => r.status === "Đang tham gia",
-  ).length;
-  const withdrawnMembers = allRecords.filter((r) => r.status === "Đã rút").length;
+  }, [search, filterRole, filterStatus, allRecords]);
 
   const handleShowDelete = (e) => {
     setSelectedEmployee(e);
@@ -91,27 +62,30 @@ const EmployeesList = () => {
     setSelectedEmployee(e);
     setShowModalDetal(true);
   };
+
+  const handleAddEmployee = (newEmployee) => {
+    const updatedData = addEmployee(data, newEmployee);
+    setData(updatedData);
+    setShowModalAdd(false);
+  };
+
+  const handleUpdateEmployee = (employeeId, updatedData) => {
+    const newData = updateEmployee(data, employeeId, updatedData);
+    setData(newData);
+    setShowModalEdit(false);
+  };
+
+  const handleDeleteEmployee = () => {
+    if (selectedEmployee) {
+      const newData = deleteEmployee(data, selectedEmployee.id);
+      setData(newData);
+      setShowModalDelete(false);
+      setSelectedEmployee(null);
+    }
+  };
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* ===== Thống kê ===== */}
-        <div className="grid grid-cols-3 gap-8">
-          <StatCard
-            title="Tổng nhân sự"
-            value={totalMembers}
-            bgColor="from-blue-500 to-blue-600"
-          />
-          <StatCard
-            title="Đang tham gia"
-            value={activeMembers}
-            bgColor="from-green-500 to-green-600"
-          />
-          <StatCard
-            title="Đã rút"
-            value={withdrawnMembers}
-            bgColor="from-red-500 to-red-600"
-          />
-        </div>
 
         {/* ===== Tìm kiếm ===== */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -132,10 +106,10 @@ const EmployeesList = () => {
             className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
           >
             <option value="all">Tất cả vai trò</option>
+            <option value="Manager">Manager</option>
             <option value="Leader">Leader</option>
-            <option value="Suport">Support</option>
-            <option value="Intern">Intern</option>
-            <option value="Developer">Developer</option>
+            <option value="Support">Support</option>
+            <option value="Employee">Employee</option>
           </select>
           <select
             value={filterStatus}
@@ -166,6 +140,7 @@ const EmployeesList = () => {
         <ModelAddEmployee
           isOpen={showModalAdd}
           onClose={() => setShowModalAdd(false)}
+          onAdd={handleAddEmployee}
         />
         <ModelDetailEmployee
           data={selectedEmployee}
@@ -176,12 +151,14 @@ const EmployeesList = () => {
           data={selectedEmployee}
           isOpen={showModalEdit}
           onClose={() => setShowModalEdit(false)}
+          onUpdate={handleUpdateEmployee}
         />
         <ModelDelete
           title="Xóa nhân sự"
           content="Bạn có chắc chắn muốn xoá nhân sự này không?"
           isOpen={showModalDelete}
           onClose={() => setShowModalDelete(false)}
+          onDelete={handleDeleteEmployee}
         />
       </div>
     </div>

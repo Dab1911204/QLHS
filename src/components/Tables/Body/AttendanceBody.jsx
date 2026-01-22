@@ -23,7 +23,7 @@ const AttendanceBody = ({
             </td>
             <td className="p-4">
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                {employee.position}
+                {employee.role}
               </span>
             </td>
             <td className="p-4 text-center">

@@ -7,7 +7,7 @@ const CheckInModal = ({
   checkOutTime,
   workDescription,
   productQuantity,
-  workResults,
+  workResults = [],
   onCheckInTimeChange,
   onCheckOutTimeChange,
   onWorkDescriptionChange,

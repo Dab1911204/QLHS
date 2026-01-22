@@ -23,28 +23,22 @@ const ModelDetailEmployee = ({ data, isOpen, onClose }) => {
             <div className="space-y-3 pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Vai trò:</span>
-                <span className="font-semibold text-gray-900">{data.type}</span>
+                <span className="font-semibold text-gray-900">{data.role}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Email:</span>
                 <span className="font-semibold text-blue-600">
-                  {data.name.toLowerCase().replace(/\s/g, ".")}@gmail.com
+                  {data.email}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">SĐT:</span>
-                <span className="font-semibold text-gray-900">090xxxxxxx</span>
+                <span className="font-semibold text-gray-900">{data.phone}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Tham gia:</span>
                 <span className="font-semibold text-gray-900">
                   {data.startDate}
-                </span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-                <span className="text-gray-600">Allocation:</span>
-                <span className="font-bold text-green-600 text-lg">
-                  {data.contribution}
                 </span>
               </div>
             </div>

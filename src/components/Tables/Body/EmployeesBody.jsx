@@ -20,18 +20,7 @@ const EmployeesBody = ({
             <td className="p-4 font-medium text-gray-900">{employee.name}</td>
             <td className="p-4">
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                {employee.type}
-              </span>
-            </td>
-            <td className="p-4">
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full"
-                  style={{ width: employee.contribution }}
-                ></div>
-              </div>
-              <span className="text-sm text-gray-600 mt-1 block">
-                {employee.contribution}
+                {employee.role}
               </span>
             </td>
             <td className="p-4">

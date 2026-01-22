@@ -1,7 +1,7 @@
 const StatCard = ({ title, value, bgColor }) =>{
   return (
     <div
-      className={`bg-gradient-to-br ${bgColor} rounded-2xl shadow-lg p-4 text-white transform hover:scale-105 transition`}
+      className={`${bgColor} rounded-2xl shadow-lg p-4 text-white transform hover:scale-105 transition`}
     >
       <p className="text-sm font-medium opacity-90">{title}</p>
       <p className="text-4xl font-bold mt-2">{value}</p>

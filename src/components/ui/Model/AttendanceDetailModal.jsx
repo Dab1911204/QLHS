@@ -30,9 +30,9 @@ const AttendanceDetailModal = ({
             </div>
             <div className="space-y-3 pt-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Vị trí:</span>
+                <span className="text-gray-600">Vai trò:</span>
                 <span className="font-semibold text-gray-900">
-                  {selectedEmployee.position}
+                  {selectedEmployee.role}
                 </span>
               </div>
               <div className="flex justify-between items-center">

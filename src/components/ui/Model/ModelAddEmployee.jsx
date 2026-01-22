@@ -1,6 +1,61 @@
+import { useState } from "react";
 import Modal from "../../common/Model";
 
-const ModelAddEmployee = ({ onClose, isOpen }) => {
+const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    role: "Support",
+    startDate: "",
+    endDate: "",
+    contribution: 0,
+    status: "Đang tham gia",
+    department: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "contribution" ? parseInt(value) || 0 : value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.position) {
+      alert("Vui lòng điền đầy đủ thông tin: Họ tên, Email, Vị trí!");
+      return;
+    }
+
+    const newEmployee = {
+      ...formData,
+      phone: formData.phone || "",
+      startDate: formData.startDate || new Date().toISOString().split("T")[0],
+      endDate: formData.endDate || null,
+      department: formData.department || "General",
+    };
+
+    if (onAdd) {
+      onAdd(newEmployee);
+    }
+
+    // Reset form
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      role: "Support",
+      startDate: "",
+      endDate: "",
+      contribution: 0,
+      status: "Đang tham gia",
+      department: "",
+    });
+  };
+
   return (
     <Modal
       title="Thêm nhân viên mới"
@@ -8,37 +63,96 @@ const ModelAddEmployee = ({ onClose, isOpen }) => {
       isOpen={isOpen}
       type="add"
     >
-      <form className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Họ tên */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Họ tên
+            Họ tên *
           </label>
           <input
             type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             placeholder="Nguyễn Văn A"
+            required
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5
                        focus:outline-none focus:ring-2 focus:ring-green-400
                        focus:border-transparent transition"
           />
         </div>
 
-        {/* Vai trò */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Vai trò trong dự án
-          </label>
-          <select
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                       focus:outline-none focus:ring-2 focus:ring-green-400
-                       focus:border-transparent transition"
-          >
-            <option value="">-- Chọn vai trò --</option>
-            <option value="Leader">Leader</option>
-            <option value="Developer">Developer</option>
-            <option value="Tester">Tester</option>
-            <option value="Intern">Intern</option>
-          </select>
+        {/* Email + Phone */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Email *
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="user@example.com"
+              required
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Điện thoại
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="0123456789"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            />
+          </div>
+        </div>
+
+        {/*Vai trò + Trạng thái*/}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Vai trò
+            </label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition bg-white"
+            >
+              <option value="Manager">Manager</option>
+              <option value="Leader">Leader</option>
+              <option value="Support">Support</option>
+              <option value="Employee">Employee</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Trạng thái
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition bg-white"
+            >
+              <option value="Đang tham gia">Đang tham gia</option>
+              <option value="Đã rút">Đã rút</option>
+            </select>
+          </div>
         </div>
 
         {/* Ngày bắt đầu + kết thúc */}
@@ -49,6 +163,9 @@ const ModelAddEmployee = ({ onClose, isOpen }) => {
             </label>
             <input
               type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5
                          focus:outline-none focus:ring-2 focus:ring-green-400
                          focus:border-transparent transition"
@@ -61,42 +178,13 @@ const ModelAddEmployee = ({ onClose, isOpen }) => {
             </label>
             <input
               type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5
                          focus:outline-none focus:ring-2 focus:ring-green-400
                          focus:border-transparent transition"
             />
-          </div>
-        </div>
-
-        {/* Allocation + Trạng thái */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              % tham gia
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              placeholder="VD: 50"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Trạng thái
-            </label>
-            <select
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition"
-            >
-              <option value="Đang tham gia">Đang tham gia</option>
-              <option value="Đã rút">Đã rút</option>
-            </select>
           </div>
         </div>
 

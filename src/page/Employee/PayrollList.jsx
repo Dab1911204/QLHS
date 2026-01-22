@@ -5,69 +5,17 @@ import ModelPayrollDetail from "../../components/ui/Model/ModelPayrollDetail";
 import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
 import PayrollBody from "../../components/Tables/Body/PayrollBody";
 import Header from "../../components/Tables/Header";
-
-const allPayrollRecords = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    position: "Leader",
-    baseSalary: 15000000,
-    bonus: 2000000,
-    deduction: 500000,
-    netSalary: 16500000,
-    month: "12/2025",
-    status: "Đã thanh toán",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    position: "Senior Developer",
-    baseSalary: 12000000,
-    bonus: 1500000,
-    deduction: 400000,
-    netSalary: 13100000,
-    month: "12/2025",
-    status: "Đang xử lý",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn C",
-    position: "Developer",
-    baseSalary: 10000000,
-    bonus: 1000000,
-    deduction: 300000,
-    netSalary: 10700000,
-    month: "12/2025",
-    status: "Đã thanh toán",
-  },
-  {
-    id: 4,
-    name: "Trần Thị D",
-    position: "Tester",
-    baseSalary: 8000000,
-    bonus: 800000,
-    deduction: 250000,
-    netSalary: 8550000,
-    month: "12/2025",
-    status: "Đang xử lý",
-  },
-  {
-    id: 5,
-    name: "Lê Văn E",
-    position: "Intern",
-    baseSalary: 5000000,
-    bonus: 300000,
-    deduction: 150000,
-    netSalary: 5150000,
-    month: "12/2025",
-    status: "Đã thanh toán",
-  },
-];
+import initialData, {
+  getAllPayrolls,
+  addPayroll,
+  updatePayroll,
+  updatePayrollByHours,
+} from "../../data/data";
 
 const hearderTitles = [
   "Mã NV",
   "Nhân viên",
-  "Vị trí",
+  "Vai trò",
   "Lương cơ bản",
   "Thưởng",
   "Khấu trừ",
@@ -77,6 +25,7 @@ const hearderTitles = [
 ];
 
 const PayrollList = () => {
+  const [data, setData] = useState(initialData);
   const [search, setSearch] = useState("");
   const [filterPosition, setFilterPosition] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -84,6 +33,8 @@ const PayrollList = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedPayroll, setSelectedPayroll] = useState(null);
+
+  const allPayrollRecords = getAllPayrolls(data)
 
   const records = useMemo(() => {
     return allPayrollRecords.filter((record) => {
@@ -99,19 +50,7 @@ const PayrollList = () => {
 
       return matchSearch && matchPosition && matchStatus;
     });
-  }, [search, filterPosition, filterStatus]);
-
-  // Tính toán số liệu thống kê
-  const totalPayroll = allPayrollRecords.reduce(
-    (sum, r) => sum + r.netSalary,
-    0,
-  );
-  const paidCount = allPayrollRecords.filter(
-    (r) => r.status === "Đã thanh toán",
-  ).length;
-  const pendingCount = allPayrollRecords.filter(
-    (r) => r.status === "Đang xử lý",
-  ).length;
+  }, [search, filterPosition, filterStatus, allPayrollRecords]);
 
   const handleShowAdd = () => {
     setSelectedPayroll(null);
@@ -128,27 +67,49 @@ const PayrollList = () => {
     setShowUpdateModal(true);
   };
 
+  const handleAddPayroll = (newPayroll) => {
+    // Nếu không có baseSalary (tính từ giờ làm)
+    if (!newPayroll.baseSalary || newPayroll.baseSalary === 0) {
+      const [month, year] = newPayroll.month.split("/");
+      const updatedData = updatePayrollByHours(
+        data,
+        newPayroll.employeeId,
+        parseInt(month),
+        parseInt(year),
+        newPayroll.bonus || 0,
+        newPayroll.deduction || 0
+      );
+      setData(updatedData);
+    } else {
+      // Thêm bảng lương thông thường
+      const updatedData = addPayroll(data, newPayroll);
+      setData(updatedData);
+    }
+    setShowModalAdd(false);
+  };
+
+  const handleUpdatePayroll = (payrollId, updatedData) => {
+    const newData = updatePayroll(data, payrollId, updatedData);
+    setData(newData);
+    setShowUpdateModal(false);
+  };
+
+  const handleRecalculateAllPayroll = () => {
+    // Cập nhật lương tất cả nhân viên cho tháng 12/2025 dựa trên giờ làm thực tế
+    let updatedData = data;
+    const employees = data.employees;
+    
+    for (const emp of employees) {
+      updatedData = updatePayrollByHours(updatedData, emp.id, 12, 2025, 0, 0);
+    }
+    
+    setData(updatedData);
+    alert("✅ Đã cập nhật lương tất cả nhân viên theo giờ làm thực tế tháng 12/2025!");
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* ===== Thống kê ===== */}
-        <div className="grid grid-cols-3 gap-8">
-          <StatCard
-            title="Tổng lương phải trả"
-            value={`${(totalPayroll / 1000000).toFixed(1)}M`}
-            bgColor="from-blue-500 to-blue-600"
-          />
-          <StatCard
-            title="Đã thanh toán"
-            value={paidCount}
-            bgColor="from-green-500 to-green-600"
-          />
-          <StatCard
-            title="Đang xử lý"
-            value={pendingCount}
-            bgColor="from-orange-500 to-orange-600"
-          />
-        </div>
 
         {/* ===== Tìm kiếm ===== */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -190,6 +151,12 @@ const PayrollList = () => {
           >
             + Thêm bảng lương
           </button>
+          <button
+            onClick={handleRecalculateAllPayroll}
+            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 font-medium transition shadow-md"
+          >
+            🔄 Cập nhật lương theo giờ làm
+          </button>
         </div>
 
         {/* ===== Bảng lương ===== */}
@@ -210,6 +177,7 @@ const PayrollList = () => {
           <ModelAddPayroll
             isOpen={showModalAdd}
             onClose={() => setShowModalAdd(false)}
+            onAdd={handleAddPayroll}
           />
         )}
 
@@ -228,6 +196,7 @@ const PayrollList = () => {
             isOpen={showUpdateModal}
             onClose={() => setShowUpdateModal(false)}
             payroll={selectedPayroll}
+            onUpdate={handleUpdatePayroll}
           />
         )}
       </div>
