@@ -5,7 +5,6 @@ import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
 import ModelDelete from "../../components/ui/Model/ModelDelete";
 import Header from "../../components/Tables/Header";
 import EmployeesBody from "../../components/Tables/Body/EmployeesBody";
-import Tab from "../../components/ui/Tag";
 import StatCard from "../../components/ui/Card";
 
 const headerLabels = [

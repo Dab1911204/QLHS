@@ -1,17 +1,19 @@
 import { useEffect, useRef } from "react";
 
-const Modal = ({ isOpen, onClose,type, title, children }) => {
+const Model = ({ isOpen, onClose, type, title, children }) => {
   const modalRef = useRef(null);
 
   let color = "";
-  if(type === "add"){
+  if (type === "add") {
     color = "bg-green-400";
-  }else if(type === "detail"){
+  } else if (type === "detail") {
     color = "bg-sky-400";
-  }else if(type === "edit"){
+  } else if (type === "edit") {
     color = "bg-yellow-400";
-  }else if(type === "delete"){
+  } else if (type === "delete") {
     color = "bg-red-400";
+  } else if (type === "check") {
+    color = "bg-gradient-to-r from-green-600 to-emerald-600";
   }
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const Modal = ({ isOpen, onClose,type, title, children }) => {
     >
       <div
         ref={modalRef}
-        className="w-auto max-w-[90vw] max-h-[90vh] rounded-2xl shadow-2xl animate-slideUp overflow-hidden"
+        className="w-full max-w-3xl max-h-[85vh] rounded-2xl shadow-2xl animate-slideUp bg-white flex flex-col"
       >
         {/* Header */}
         <div className={`px-6 py-4 flex items-center justify-between ${color}`}>
@@ -80,11 +82,9 @@ const Modal = ({ isOpen, onClose,type, title, children }) => {
           </button>
         </div>
 
-        <div className="bg-white p-6">
-          {children}
-        </div>
+        <div className="bg-white p-6">{children}</div>
       </div>
     </div>
   );
 };
-export default Modal;
+export default Model;

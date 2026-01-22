@@ -1,7 +1,19 @@
 import { useState } from "react";
-import AttendanceTable from "../../components/Tables/AttendanceTable";
 import AttendanceDetailModal from "../../components/ui/Model/AttendanceDetailModal";
 import CheckInModal from "../../components/ui/Model/CheckInModal";
+import Header from "../../components/Tables/Header";
+import AttendanceBody from "../../components/Tables/Body/AttendanceBody";
+
+const hearerLabels = [
+  "STT",
+  "Họ tên",
+  "Vị trí",
+  "Có mặt",
+  "Vắng",
+  "Muộn",
+  "Tổng giờ",
+  "Thao tác",
+];
 
 const AttendanceList = () => {
   const [search, setSearch] = useState("");
@@ -234,11 +246,16 @@ const AttendanceList = () => {
             </button>
           </div>
           {/* ===== Bảng danh sách ===== */}
-          <AttendanceTable
-            filteredEmployees={filteredEmployees}
-            getAttendanceStats={getAttendanceStats}
-            onViewDetail={handleViewDetail}
-          />
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+            <table className="w-full">
+              <Header titles={hearerLabels} />
+              <AttendanceBody
+                filteredEmployees={filteredEmployees}
+                getAttendanceStats={getAttendanceStats}
+                onViewDetail={handleViewDetail}
+              />
+            </table>
+          </div>
 
           {/* ===== Modal Chi tiết ===== */}
           <AttendanceDetailModal
