@@ -39,12 +39,9 @@ const ClientLogin = () => {
         phone: user.phone,
         password: user.password,
         role: user.role,
-        position: user.position,
         startDate: user.startDate,
         endDate: user.endDate,
         status: user.status,
-        department: user.department,
-        contribution: user.contribution,
         avatar: user.avatar,
       })
     );

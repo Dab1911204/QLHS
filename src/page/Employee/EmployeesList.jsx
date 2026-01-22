@@ -148,6 +148,7 @@ const EmployeesList = () => {
           onClose={() => setShowModalDetal(false)}
         />
         <ModelEditEmployee
+          key={selectedEmployee?.id}
           data={selectedEmployee}
           isOpen={showModalEdit}
           onClose={() => setShowModalEdit(false)}
