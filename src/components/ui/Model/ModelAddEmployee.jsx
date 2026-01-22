@@ -2,78 +2,123 @@ import Modal from "../../common/Model";
 
 const ModelAddEmployee = ({ onClose, isOpen }) => {
   return (
-    <Modal title="Thêm nhân viên mới" onClose={onClose} isOpen={isOpen} type={"add"}>
-      <form className="space-y-4">
+    <Modal
+      title="Thêm nhân viên mới"
+      onClose={onClose}
+      isOpen={isOpen}
+      type="add"
+    >
+      <form className="space-y-5">
         {/* Họ tên */}
         <div>
-          <label className="block text-sm font-medium mb-1">Họ tên</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            Họ tên
+          </label>
           <input
             type="text"
-            placeholder="Nhập họ tên"
-            className="w-full border rounded px-3 py-2"
+            placeholder="Nguyễn Văn A"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                       focus:outline-none focus:ring-2 focus:ring-green-400
+                       focus:border-transparent transition"
           />
         </div>
 
-        {/* Vai trò trong dự án */}
+        {/* Vai trò */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
             Vai trò trong dự án
           </label>
-          <input
-            type="text"
-            placeholder="VD: Backend, Frontend, Tester..."
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
-
-        {/* Ngày bắt đầu */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Ngày bắt đầu</label>
-          <input type="date" className="w-full border rounded px-3 py-2" />
-        </div>
-
-        {/* Ngày kết thúc */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Ngày kết thúc (nếu có)
-          </label>
-          <input type="date" className="w-full border rounded px-3 py-2" />
-        </div>
-
-        {/* % tham gia */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            % tham gia (Allocation)
-          </label>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            placeholder="VD: 50"
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
-
-        {/* Trạng thái */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Trạng thái</label>
-          <select className="w-full border rounded px-3 py-2">
-            <option value="active">Đang tham gia</option>
-            <option value="inactive">Đã rút</option>
+          <select
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                       focus:outline-none focus:ring-2 focus:ring-green-400
+                       focus:border-transparent transition"
+          >
+            <option value="">-- Chọn vai trò --</option>
+            <option value="Leader">Leader</option>
+            <option value="Developer">Developer</option>
+            <option value="Tester">Tester</option>
+            <option value="Intern">Intern</option>
           </select>
         </div>
 
-        {/* Thao tác */}
-        <div className="flex justify-end gap-2 pt-4">
-          <button type="button" className="px-4 py-2 border rounded bg-red-400 text-white hover:bg-red-500 cursor-pointer">
+        {/* Ngày bắt đầu + kết thúc */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Ngày bắt đầu
+            </label>
+            <input
+              type="date"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Ngày kết thúc
+            </label>
+            <input
+              type="date"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            />
+          </div>
+        </div>
+
+        {/* Allocation + Trạng thái */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              % tham gia
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              placeholder="VD: 50"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Trạng thái
+            </label>
+            <select
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                         focus:outline-none focus:ring-2 focus:ring-green-400
+                         focus:border-transparent transition"
+            >
+              <option value="Đang tham gia">Đang tham gia</option>
+              <option value="Đã rút">Đã rút</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex justify-end gap-3 pt-6 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-lg border border-gray-300
+                       text-gray-600 hover:bg-gray-100 transition"
+          >
             Hủy
           </button>
 
           <button
-            type="button"
-            className="px-4 py-2 border rounded bg-green-400 text-white hover:bg-green-500 cursor-pointer"
+            type="submit"
+            className="px-6 py-2.5 rounded-lg bg-gradient-to-r
+                       from-green-500 to-green-600 text-white font-semibold
+                       hover:from-green-600 hover:to-green-700
+                       shadow-md hover:shadow-lg transition"
           >
-            Thêm
+            + Thêm nhân sự
           </button>
         </div>
       </form>

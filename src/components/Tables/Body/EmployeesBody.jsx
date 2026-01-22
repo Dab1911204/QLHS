@@ -2,50 +2,82 @@ import { FaRegEye } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscTools } from "react-icons/vsc";
 
-const EmployeesBody = ({ items, search, handleShowDelete,handleShowDetail,handleShowEdit }) => {
+const EmployeesBody = ({
+  items,
+  handleShowDelete,
+  handleShowDetail,
+  handleShowEdit,
+}) => {
   return (
     <>
       <tbody>
-        {items
-          .filter((r) => r.name.toLowerCase().includes(search.toLowerCase()))
-          .map((record, index) => (
-            <tr key={record.id} className="border-t hover:bg-gray-50">
-              <td className="p-4">{index + 1}</td>
-              <td className="p-4">{record.name}</td>
-              <td className="p-4">{record.type}</td>
-              <td className="p-4">{record.startDate}</td>
-              <td className="p-4">{record.startDate}</td>
-              <td className="p-4">{record.contribution}</td>
-              <td className="p-4">
-                <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
-                  {record.status}
+        {items.map((employee, idx) => (
+          <tr
+            key={employee.id}
+            className={`border-b border-gray-100 hover:bg-blue-50 transition ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+          >
+            <td className="p-4 font-medium text-gray-700">#{employee.id}</td>
+            <td className="p-4 font-medium text-gray-900">{employee.name}</td>
+            <td className="p-4">
+              <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                {employee.type}
+              </span>
+            </td>
+            <td className="p-4">
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full"
+                  style={{ width: employee.contribution }}
+                ></div>
+              </div>
+              <span className="text-sm text-gray-600 mt-1 block">
+                {employee.contribution}
+              </span>
+            </td>
+            <td className="p-4">
+              {employee.status === "Đang tham gia" ? (
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  ✓ {employee.status}
                 </span>
-              </td>
-              <td className="p-4 space-x-1">
-                <button className="px-2 py-1 rounded-lg text-white bg-sky-500 hover:bg-sky-600 cursor-pointer" onClick={() => handleShowDetail(record)}>
-                  <div className="flex items-center gap-1">
+              ) : (
+                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                  ✕ {employee.status}
+                </span>
+              )}
+            </td>
+            <td className="p-4">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleShowDetail(employee)}
+                  className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded-lg text-sm font-medium transition"
+                >
+                  <div className="flex flex-row items-center gap-1">
                     <FaRegEye />
                     <span>Xem</span>
                   </div>
                 </button>
-                <button className="px-2 py-1 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 cursor-pointer" onClick={() => handleShowEdit(record)}>
-                  <div className="flex items-center gap-1">
+                <button
+                  onClick={() => handleShowEdit(employee)}
+                  className="bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-1 rounded-lg text-sm font-medium transition"
+                >
+                  <div className="flex flex-row items-center gap-1">
                     <VscTools />
                     <span>Sửa</span>
                   </div>
                 </button>
                 <button
-                  onClick={() => handleShowDelete(record)}
-                  className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg cursor-pointer"
+                  onClick={() => handleShowDelete(employee)}
+                  className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-lg text-sm font-medium transition"
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex flex-row items-center gap-1">
                     <RiDeleteBin6Line />
                     <span>Xóa</span>
                   </div>
                 </button>
-              </td>
-            </tr>
-          ))}
+              </div>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </>
   );

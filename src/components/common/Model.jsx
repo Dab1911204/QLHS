@@ -38,7 +38,7 @@ const Modal = ({ isOpen, onClose,type, title, children }) => {
     >
       <div
         ref={modalRef}
-        className="w-full max-w-md rounded-2xl shadow-2xl animate-slideUp overflow-hidden"
+        className="w-auto max-w-[90vw] max-h-[90vh] rounded-2xl shadow-2xl animate-slideUp overflow-hidden"
       >
         {/* Header */}
         <div className={`px-6 py-4 flex items-center justify-between ${color}`}>
