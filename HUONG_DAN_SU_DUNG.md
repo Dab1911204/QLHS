@@ -3,37 +3,134 @@
 ## 🎯 Tổng quan hệ thống
 
 Hệ thống QLHS là một ứng dụng quản lý toàn diện bao gồm:
+- **Authentication & Authorization** ✨ NEW
 - **Quản lý nhân viên** (Employee Management)
 - **Quản lý lương** (Payroll Management) - **Tự động tính từ giờ làm thực tế**
 - **Chấm công & Tracking giờ làm** (Attendance & Hours Tracking)
 - **Dashboard thống kê** (Statistics Dashboard)
+- **Hồ sơ người dùng** (User Profile) ✨ NEW
+
+---
+
+## 🔐 PHẦN 1: AUTHENTICATION {#authentication}
+
+### 🔑 Đăng Nhập Hệ Thống
+
+#### Trước khi sử dụng
+1. Nếu chưa đăng nhập → Tự động chuyển hướng về `/login`
+2. Tất cả route khác đều được bảo vệ (ProtectedRoute)
+
+#### Hướng dẫn đăng nhập
+1. Mở trang `/login`
+2. Nhập **Email**: `a@gmail.com`
+3. Nhập **Mật khẩu**: `password` (hoặc password nhân viên khác)
+4. Nhấn **"Đăng nhập"**
+5. Tự động redirect về trang chủ (Home)
+6. **Header** sẽ hiển thị tên + avatar của bạn
+
+#### Danh sách tài khoản demo
+```
+ID  Email             Password     Vị trí
+1   a@gmail.com      password     Manager
+2   b@gmail.com      password     Leader
+3   c@gmail.com      password     Support
+4   d@gmail.com      password     Employee
+5   e@gmail.com      password     Intern
+```
+
+---
+
+### 👤 Thông Tin Người Dùng (Header + Dropdown)
+
+#### Hiển thị thông tin
+1. **Avatar/Initials** - Hiển thị ảnh nếu có, hoặc chữ cái đầu tiên
+2. **Tên người dùng** - Hiển thị bên cạnh avatar
+3. **Mũi tên** - Xoay 180° khi mở dropdown
+
+#### Dropdown menu
+```
+┌─────────────────────┐
+│  Nguyễn Văn A       │
+│  a@gmail.com        │  ← Header thông tin
+│  Manager            │
+├─────────────────────┤
+│ 👤 Thông tin cá nhân │ ← Vào /user-profile
+│ 🚪 Đăng xuất        │ ← Logout + xóa localStorage
+└─────────────────────┘
+```
+
+#### Chức năng:
+- **👤 Thông tin cá nhân** - Vào trang chỉnh sửa profile
+- **🚪 Đăng xuất** - Logout + clear localStorage + redirect /login
+
+---
+
+### 📝 Hồ Sơ Người Dùng (User Profile) {#user-profile}
+
+#### Vào trang profile
+1. **Cách 1**: Click dropdown → "👤 Thông tin cá nhân"
+2. **Cách 2**: Url trực tiếp `/user-profile`
+
+#### Tab 1: Sửa Thông Tin Cá Nhân
+
+Các trường có thể sửa:
+- ✏️ **Họ tên** - Tên đầy đủ
+- ✏️ **Email** - Địa chỉ email
+- ✏️ **Điện thoại** - Số điện thoại
+- ✏️ **Vị trí** - Công việc (Developer, Manager, etc)
+- ✏️ **Phòng ban** - Bộ phận làm việc
+- ✏️ **Ngày bắt đầu** - Ngày vào làm
+- ✏️ **Trạng thái** - Đang tham gia / Đã rút
+
+**Cách sử dụng:**
+1. Nhập thông tin mới
+2. Nhấn **"✓ Cập nhật thông tin"**
+3. Thông báo "✅ Cập nhật thông tin cá nhân thành công!"
+4. Dữ liệu lưu vào Redux + localStorage
+
+#### Tab 2: Đổi Mật Khẩu
+
+**Các trường:**
+- 🔐 **Mật khẩu cũ** (bắt buộc)
+- 🔐 **Mật khẩu mới** (min 6 ký tự)
+- 🔐 **Xác nhận mật khẩu** (phải khớp)
+
+**Validation:**
+- ❌ Mật khẩu cũ không đúng → Hiển thị lỗi
+- ❌ Mật khẩu mới < 6 ký tự → Hiển thị lỗi
+- ❌ Xác nhận không khớp → Hiển thị lỗi
+- ✅ Hợp lệ → Cập nhật + thông báo thành công
 
 ---
 
 ## 🔄 Luồng dữ liệu chính
 
 ```
-Chấm công (Attendance)
-    ↓ [Auto] Tính giờ làm từ check-in/out
-    ↓
-Bảng lương (Payroll)
-    ↓ [Auto] Tính lương = giờ làm × giá giờ
-    ↓
-Dashboard (Home)
-    ↓ Hiển thị thống kê tổng hợp
+Login
+  ↓
+Dispatch setUser(employeeData) → Redux state
+  ↓
+redux-persist → localStorage["persist:root"]
+  ↓
+Navigation (redirect home)
+  ↓
+ProtectedRoute check: isLoggedIn = true ✅
+  ↓
+Render main app + Header with UserDropdown
+  ↓
+User can access all pages
 ```
 
 ---
 
-## 📝 Chi tiết từng module
-
-### 1️⃣ **QUẢN LÝ NHÂN VIÊN** (Employee)
+## 💼 PHẦN 2: QUẢN LÝ NHÂN VIÊN {#employee-management}
 
 #### ✅ Thêm nhân viên mới
 1. Nhấn nút **"+ Thêm nhân sự"** (màu đỏ)
 2. Điền thông tin bắt buộc (*):
    - **Họ tên** - Tên đầy đủ nhân viên
-   - **Email** - Địa chỉ email làm việc
+   - **Email** - Địa chỉ email làm việc (dùng để đăng nhập)
+   - **Mật khẩu** - Min 6 ký tự (dùng để đăng nhập) ✨ NEW
    - **Vị trí** - Chọn từ danh sách (Leader, Developer, Tester, Intern, ...)
 3. Điền thông tin tùy chọn:
    - Điện thoại
@@ -47,7 +144,8 @@ Dashboard (Home)
 1. Tìm nhân viên trong bảng → Nhấn biểu tượng **"Sửa"** (bút)
 2. Modal mở ra với thông tin hiện tại
 3. Thay đổi các trường cần sửa
-4. Nhấn **"✓ Cập nhật"** → Lưu ngay vào database
+4. Có thể cập nhật password ✨ NEW
+5. Nhấn **"✓ Cập nhật"** → Lưu ngay vào database
 
 #### ❌ Xóa nhân viên
 1. Nhấn **"Xóa"** (thùng rác) trong hàng nhân viên
@@ -256,12 +354,19 @@ Lương thực tế = (15,000,000 ÷ 176) × 46.5 + 500,000 - 100,000
    - Attendance records từ ngày 15-18/12/2025
    - Khi xem attendance, chọn tháng 12, năm 2025
 
+6. **Authentication & Data Persistence** ✨ NEW:
+   - Login info lưu vào Redux + localStorage
+   - Reload page → vẫn đăng nhập (không cần login lại)
+   - Logout → localStorage xóa sạch
+   - Tất cả routes bảo vệ (ProtectedRoute)
+
 ---
 
 ## 🚀 **Tips sử dụng hiệu quả**
 
 ✅ **Làm theo thứ tự**:
-1. Thêm nhân viên → 2. Thêm lương → 3. Chấm công → 4. Cập nhật lương → 5. Xem kết quả
+1. Đăng nhập
+2. Thêm nhân viên → 3. Thêm lương → 4. Chấm công → 5. Cập nhật lương → 6. Xem kết quả
 
 ✅ **Kiểm tra trước khi xóa**: Xem chi tiết bản ghi trước khi xóa
 
@@ -269,16 +374,19 @@ Lương thực tế = (15,000,000 ÷ 176) × 46.5 + 500,000 - 100,000
 
 ✅ **Xem dashboard hàng ngày**: Kiểm tra thống kê để nắm tình hình nhân sự
 
+✅ **Chỉnh sửa profile định kỳ**: Cập nhật mật khẩu, thông tin cá nhân qua /user-profile
+
 ---
 
 ## 📞 **Hỗ trợ**
 
 Nếu gặp lỗi:
 1. **Refresh page**: F5 hay Ctrl+R
-2. **Kiểm tra console**: F12 → Console tab
-3. **Xóa cache**: Ctrl+Shift+Delete
+2. **Kiểm tra login**: Nếu nhảy về /login, cần đăng nhập lại
+3. **Kiểm tra console**: F12 → Console tab xem lỗi chi tiết
+4. **Xóa cache & localStorage**: Ctrl+Shift+Delete → xóa site data
 
 ---
 
-**Cập nhật lần cuối**: 22/01/2026
-**Phiên bản**: 1.0.0
+**Cập nhật lần cuối**: 23/01/2026  
+**Phiên bản**: 2.0 (with Authentication & Redux + User Profile)

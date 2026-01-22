@@ -9,6 +9,8 @@ import initialData, {
   addAttendance,
 } from "../../data/data";
 import { FaRegUserCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { userInfoSelector } from "../../redux/slices/userInfo";
 
 const hearerLabels = [
   "STT",
@@ -29,10 +31,7 @@ const AttendanceList = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
-  const [currentUser] = useState(() => {
-    const emp = getAllEmployees(initialData)[0];
-    return emp || { id: 1, name: "User", position: "Employee", email: "user@example.com" };
-  });
+  const currentUser = useSelector(userInfoSelector)
   const [checkInTime, setCheckInTime] = useState("");
   const [checkOutTime, setCheckOutTime] = useState("");
   const [workDescription, setWorkDescription] = useState("");
