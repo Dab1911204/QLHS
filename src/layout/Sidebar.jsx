@@ -18,6 +18,7 @@ const initialMenuItems = [
     children: [
       { name: "Danh sách nhân sự", path: "/employees" },
       { name: "Chấm công", path: "/employees/attendance" },
+      { name: "Bảng lương", path: "/employees/payroll" },
     ],
   },
 ];

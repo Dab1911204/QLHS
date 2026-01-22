@@ -6,6 +6,7 @@ import EmployeesPage from "../page/Employee";
 import AttendanceList from "../page/Employee/AttendanceList";
 import EmployeesList from "../page/Employee/EmployeesList";
 import HomePage from "../page/Home";
+import PayrollList from "../page/Employee/PayrollList";
 
 export const router = [
 
@@ -38,6 +39,10 @@ export const router = [
           {
             path: "attendance",
             element: <AttendanceList />,
+          },
+          {
+            path: "payroll",
+            element: <PayrollList />,
           }
         ]
       }
