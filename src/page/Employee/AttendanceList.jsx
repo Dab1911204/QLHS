@@ -8,6 +8,7 @@ import initialData, {
   getAttendanceByEmployeeId,
   addAttendance,
 } from "../../data/data";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const hearerLabels = [
   "STT",
@@ -188,9 +189,14 @@ const AttendanceList = () => {
           </div>
 
           {/* ===== Nút chấm công cá nhân ===== */}
-          <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-4 text-white flex items-center justify-between">
+          <div className="bg-green-500 rounded-xl shadow-lg p-4 text-white flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="text-lg font-semibold">👤 {currentUser.name}</div>
+              <div className="text-lg font-semibold flex items-center gap-2">
+                <FaRegUserCircle/>
+                <span>
+                  {currentUser.name}
+                </span>
+              </div>
               <div className="h-6 w-px bg-white opacity-30"></div>
               <div className="text-sm opacity-90">{currentUser.position}</div>
             </div>

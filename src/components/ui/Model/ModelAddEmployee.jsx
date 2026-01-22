@@ -6,6 +6,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
     name: "",
     email: "",
     phone: "",
+    password: "",
     role: "Support",
     startDate: "",
     endDate: "",
@@ -25,8 +26,13 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.position) {
-      alert("Vui lòng điền đầy đủ thông tin: Họ tên, Email, Vị trí!");
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("Vui lòng điền đầy đủ thông tin: Họ tên, Email, Mật khẩu!");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert("Mật khẩu phải có ít nhất 6 ký tự!");
       return;
     }
 
@@ -47,6 +53,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
       name: "",
       email: "",
       phone: "",
+      password: "",
       role: "Support",
       startDate: "",
       endDate: "",
@@ -115,6 +122,24 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
                          focus:border-transparent transition"
             />
           </div>
+        </div>
+
+        {/* Mật khẩu */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            Mật khẩu *
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
+            required
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                       focus:outline-none focus:ring-2 focus:ring-green-400
+                       focus:border-transparent transition"
+          />
         </div>
 
         {/*Vai trò + Trạng thái*/}

@@ -6,6 +6,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
     name: "",
     email: "",
     phone: "",
+    password: "",
     position: "",
     role: "Support",
     startDate: "",
@@ -20,6 +21,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
       name: data.name ?? "",
       email: data.email ?? "",
       phone: data.phone ?? "",
+      password: data.password ?? "",
       position: data.position ?? "",
       role: data.role ?? "Support",
       startDate: data.startDate ?? "",
@@ -39,8 +41,13 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.position) {
-      alert("Vui lòng điền đầy đủ thông tin: Họ tên, Email, Vị trí!");
+    if (!formData.name || !formData.email) {
+      alert("Vui lòng điền đầy đủ thông tin: Họ tên, Email!");
+      return;
+    }
+
+    if (formData.password && formData.password.length < 6) {
+      alert("Mật khẩu phải có ít nhất 6 ký tự!");
       return;
     }
 
@@ -110,6 +117,24 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
                          focus:border-transparent transition"
             />
           </div>
+        </div>
+
+        {/* Mật khẩu */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            Mật khẩu
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Nhập mật khẩu mới (để trống nếu không thay đổi)"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
+                       focus:outline-none focus:ring-2 focus:ring-green-400
+                       focus:border-transparent transition"
+          />
+          <p className="text-xs text-gray-500 mt-1">Mật khẩu phải có ít nhất 6 ký tự</p>
         </div>
 
         {/* Vị trí + Vai trò */}

@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import StatCard from "../../components/ui/Card";
 import ModelAddPayroll from "../../components/ui/Model/ModelAddPayroll";
 import ModelPayrollDetail from "../../components/ui/Model/ModelPayrollDetail";
 import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
