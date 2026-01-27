@@ -34,7 +34,7 @@ const Model = ({ isOpen, onClose, type, title, children }) => {
       <div
         ref={modalRef}
         className="
-          w-full max-w-3xl
+          w-full max-w-6xl
           max-h-[90vh]
           bg-white
           rounded-2xl

@@ -41,11 +41,6 @@ const AttendanceBody = ({
                 {stats.late}
               </span>
             </td>
-            <td className="p-4 text-center">
-              <span className="font-bold text-blue-600">
-                {stats.totalHours.toFixed(1)}h
-              </span>
-            </td>
             <td className="p-4">
               <div className="flex gap-2">
                 <button

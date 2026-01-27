@@ -61,7 +61,7 @@ const AttendanceDetailModal = ({
           {/* Details and Stats */}
           <div className="col-span-2">
             {/* Thống kê */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-4">
                 <p className="text-sm opacity-90">Có mặt</p>
                 <p className="text-3xl font-bold">
@@ -80,15 +80,6 @@ const AttendanceDetailModal = ({
                   {getAttendanceStats(selectedEmployee.id).late}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4">
-                <p className="text-sm opacity-90">Tổng giờ</p>
-                <p className="text-3xl font-bold">
-                  {getAttendanceStats(selectedEmployee.id).totalHours.toFixed(
-                    1,
-                  )}
-                  h
-                </p>
-              </div>
             </div>
 
             {/* Bảng chi tiết */}
@@ -100,9 +91,9 @@ const AttendanceDetailModal = ({
                     <th className="p-3 text-center font-semibold">Giờ vào</th>
                     <th className="p-3 text-center font-semibold">Giờ ra</th>
                     <th className="p-3 text-center font-semibold">Giờ làm</th>
-                    <th className="p-3 text-center font-semibold">
-                      Trạng thái
-                    </th>
+                    <th className="p-3 text-center font-semibold">Số lượng</th>
+                    <th className="p-3 text-center font-semibold">Đơn vị</th>
+                    <th className="p-3 text-center font-semibold">Trạng thái</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,6 +132,12 @@ const AttendanceDetailModal = ({
                         </td>
                         <td className="p-3 text-center font-semibold text-blue-600">
                           {record.workHours > 0 ? `${record.workHours}h` : "0h"}
+                        </td>
+                        <td className="p-3 text-center font-semibold text-purple-600">
+                          {record.productQuantity || 0}
+                        </td>
+                        <td className="p-3 text-center text-gray-600">
+                          {record.unit || "—"}
                         </td>
                         <td className="p-3 text-center">
                           {record.status === "present" && (
