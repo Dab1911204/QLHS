@@ -1,25 +1,29 @@
 import { useMemo } from "react";
 import Model from "../../common/Model";
+import { useData } from "../../../contexts/Data/DataContext";
 import { getEmployeeRoleByPayroll } from "../../../data/data";
 
-const formatCurrency = (value) =>
-  new Intl.NumberFormat("vi-VN", {
+const formatCurrency = (value) => {
+  if (value === null || value === undefined || isNaN(value)) return "0 ₫";
+  return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0,
   }).format(value);
+};
 
 const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
+  const { data } = useData();
 
-  // Lấy thông tin nhân viên từ payroll - chỉ cần truyền id
+  // Lấy thông tin nhân viên từ payroll
   const employeeInfo = useMemo(() => {
-    if (!payroll) return null;
-    return getEmployeeRoleByPayroll(payroll.id);
-  }, [payroll]);
+    if (!payroll || !data) return null;
+    return getEmployeeRoleByPayroll(data, payroll.id);
+  }, [payroll, data]);
 
-  if (!isOpen || !payroll) return null;  
+  if (!isOpen || !payroll) return null;
 
-  const netSalary = payroll.baseSalary + payroll.bonus - payroll.deduction;
+  const netSalary = payroll.baseSalary + (payroll.bonus || 0) - (payroll.deduction || 0);
   const isPaid = payroll.status === "Đã thanh toán";
 
   return (
@@ -51,6 +55,15 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
           <h3 className="text-base font-semibold text-gray-800 mb-4">
             💰 Chi tiết lương
           </h3>
+
+          <div className="mb-4 pb-4 border-b">
+            <p className="text-sm text-gray-600 mb-2">Giờ/Phiếu làm được</p>
+            <p className="text-lg font-bold text-blue-600">
+              {["Manager", "Leader", "Support"].includes(payroll.role)
+                ? `${payroll.totalHours || 0} giờ`
+                : `${payroll.totalProducts || 0} phiếu`}
+            </p>
+          </div>
 
           <SalaryRow label="Lương cơ bản" value={payroll.baseSalary} />
           <SalaryRow

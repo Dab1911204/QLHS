@@ -64,15 +64,18 @@ const initialData = {
   ],
 
   // ===== BẢNG LƯƠNG (Liên kết với nhân viên qua employeeId) =====
+  // baseSalary được tính tự động từ giờ làm hoặc phiếu tùy chức vụ dựa trên attendance
   payrolls: [
     {
       id: 1,
       employeeId: 1,
       month: "12/2025",
-      baseSalary: 15000000,
+      baseSalary: 1460000,
       bonus: 2000000,
       deduction: 500000,
-      netSalary: 16500000,
+      netSalary: 2960000,
+      totalHours: 36.5,
+      totalProducts: 0,
       status: "Đã thanh toán",
       paidDate: "2025-12-31",
     },
@@ -80,10 +83,12 @@ const initialData = {
       id: 2,
       employeeId: 2,
       month: "12/2025",
-      baseSalary: 12000000,
+      baseSalary: 1460000,
       bonus: 1500000,
       deduction: 400000,
-      netSalary: 13100000,
+      netSalary: 2560000,
+      totalHours: 36.5,
+      totalProducts: 0,
       status: "Đang xử lý",
       paidDate: null,
     },
@@ -91,10 +96,12 @@ const initialData = {
       id: 3,
       employeeId: 3,
       month: "12/2025",
-      baseSalary: 10000000,
+      baseSalary: 1120000,
       bonus: 1000000,
       deduction: 300000,
-      netSalary: 10700000,
+      netSalary: 1820000,
+      totalHours: 28,
+      totalProducts: 0,
       status: "Đã thanh toán",
       paidDate: "2025-12-31",
     },
@@ -102,10 +109,12 @@ const initialData = {
       id: 4,
       employeeId: 4,
       month: "12/2025",
-      baseSalary: 8000000,
+      baseSalary: 4500,
       bonus: 800000,
       deduction: 250000,
-      netSalary: 8550000,
+      netSalary: 554500,
+      totalHours: 0,
+      totalProducts: 25,
       status: "Đang xử lý",
       paidDate: null,
     },
@@ -113,35 +122,14 @@ const initialData = {
       id: 5,
       employeeId: 5,
       month: "12/2025",
-      baseSalary: 5000000,
+      baseSalary: 540,
       bonus: 300000,
       deduction: 150000,
-      netSalary: 5150000,
+      netSalary: 150540,
+      totalHours: 0,
+      totalProducts: 3,
       status: "Đã thanh toán",
       paidDate: "2025-12-31",
-    },
-    // Thêm bảng lương tháng 11
-    {
-      id: 6,
-      employeeId: 1,
-      month: "11/2025",
-      baseSalary: 15000000,
-      bonus: 1500000,
-      deduction: 500000,
-      netSalary: 16000000,
-      status: "Đã thanh toán",
-      paidDate: "2025-11-30",
-    },
-    {
-      id: 7,
-      employeeId: 2,
-      month: "11/2025",
-      baseSalary: 12000000,
-      bonus: 1000000,
-      deduction: 400000,
-      netSalary: 12600000,
-      status: "Đã thanh toán",
-      paidDate: "2025-11-30",
     },
   ],
 
@@ -402,19 +390,45 @@ export const getPayrollById = (data, payrollId) => {
 };
 
 /**
- * Lấy tất cả bảng lương
- */
-/**
- * Lấy tất cả bảng lương
+ * Lấy tất cả bảng lương (với tính toán động từ attendance)
  */
 export const getAllPayrolls = (data) => {
   return data.payrolls.map((payroll) => {
     const employee = getEmployeeById(data, payroll.employeeId);
+    if (!employee) return payroll;
+
+    // Tính toán lại giờ/phiếu từ attendance
+    const month = parseInt(payroll.month.split("/")[0]);
+    const year = parseInt(payroll.month.split("/")[1]);
+    
+    let totalHours = 0;
+    let totalProducts = 0;
+
+    if (["Manager", "Leader", "Support"].includes(employee.role)) {
+      totalHours = getTotalHoursByEmployeeAndMonth(data, employee.id, month, year);
+    } else if (employee.role === "Employee") {
+      totalProducts = getTotalProductsByEmployeeAndMonth(data, employee.id, month, year);
+    }
+
+    // Tính lương dựa trên attendance
+    let baseSalary = 0;
+    if (["Manager", "Leader", "Support"].includes(employee.role)) {
+      baseSalary = calculateSalaryByHours(totalHours);
+    } else if (employee.role === "Employee") {
+      baseSalary = calculateSalaryByProducts(totalProducts);
+    }
+
+    // Tính netSalary = baseSalary + bonus - deduction
+    const netSalary = baseSalary + (payroll.bonus || 0) - (payroll.deduction || 0);
+
     return {
       ...payroll,
       name: employee?.name,
-      position: employee?.position,
       role: employee?.role,
+      baseSalary,
+      netSalary,
+      totalHours,
+      totalProducts,
     };
   });
 };
@@ -481,7 +495,7 @@ export const addEmployee = (data, newEmployee) => {
 };
 
 /**
- * Thêm bảng lương mới
+ * Thêm bảng lương mới (baseSalary được tính tự động từ giờ làm hoặc sản phẩm)
  */
 export const addPayroll = (data, newPayroll) => {
   const nextId =
@@ -494,9 +508,11 @@ export const addPayroll = (data, newPayroll) => {
     employeeId: newPayroll.employeeId,
     month: newPayroll.month,
     baseSalary: newPayroll.baseSalary,
-    bonus: newPayroll.bonus,
-    deduction: newPayroll.deduction,
+    bonus: newPayroll.bonus || 0,
+    deduction: newPayroll.deduction || 0,
     netSalary: newPayroll.netSalary,
+    totalHours: newPayroll.totalHours || 0,
+    totalProducts: newPayroll.totalProducts || 0,
     status: newPayroll.status || "Đang xử lý",
     paidDate: newPayroll.paidDate || null,
   };
@@ -691,37 +707,73 @@ export const getTotalHoursByEmployeeAndMonth = (data, employeeId, month, year) =
 };
 
 /**
- * Tính lương theo giờ làm (hỗ trợ động)
- * Lương theo giờ = baseSalary / 22 days * 8 hours / giờ
- * = baseSalary / 176 giờ chuẩn/tháng
+ * Tính tổng số phiếu/sản phẩm của nhân viên trong tháng
  */
-export const calculateSalaryByHours = (baseSalary, actualHours, standardHours = 176) => {
-  const hourlyRate = baseSalary / standardHours;
-  return Math.floor(hourlyRate * actualHours);
+export const getTotalProductsByEmployeeAndMonth = (data, employeeId, month, year) => {
+  return data.attendance
+    .filter((att) => {
+      const attDate = new Date(att.date);
+      return (
+        att.employeeId === employeeId &&
+        attDate.getMonth() + 1 === month &&
+        attDate.getFullYear() === year
+      );
+    })
+    .reduce((sum, att) => sum + (att.productQuantity || 0), 0);
 };
 
 /**
- * Tính lương tháng dựa trên giờ làm
+ * Tính lương theo giờ làm (cho Manager, Leader, Support)
+ * Mỗi giờ = 40,000 đồng
+ */
+export const calculateSalaryByHours = (totalHours, hourlyRate = 40000) => {
+  return Math.floor(totalHours * hourlyRate);
+};
+
+/**
+ * Tính lương theo sản phẩm (cho Employee)
+ * Mỗi phiếu = 180 đồng
+ */
+export const calculateSalaryByProducts = (totalProducts, productRate = 180) => {
+  return Math.floor(totalProducts * productRate);
+};
+
+/**
+ * Tính lương tháng dựa trên chức vụ
+ * - Manager, Leader, Support: Tính theo giờ (40,000/giờ)
+ * - Employee: Tính theo sản phẩm (180/phiếu)
  */
 export const calculateMonthlyPayroll = (data, employeeId, month, year, bonus = 0, deduction = 0) => {
   const employee = getEmployeeById(data, employeeId);
   if (!employee) return null;
 
-  const totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
-  const baseSalary = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year) > 0
-    ? calculateSalaryByHours(employee.baseSalary || 10000000, totalHours)
-    : 0;
+  const monthStr = `${String(month).padStart(2, "0")}/${year}`;
+  let baseSalary = 0;
+  let totalHours = 0;
+  let totalProducts = 0;
+
+  // Kiểm tra chức vụ
+  if (["Manager", "Leader", "Support"].includes(employee.role)) {
+    // Tính lương theo giờ làm
+    totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
+    baseSalary = calculateSalaryByHours(totalHours);
+  } else if (employee.role === "Employee") {
+    // Tính lương theo sản phẩm
+    totalProducts = getTotalProductsByEmployeeAndMonth(data, employeeId, month, year);
+    baseSalary = calculateSalaryByProducts(totalProducts);
+  }
 
   const netSalary = baseSalary + bonus - deduction;
 
   return {
     employeeId,
-    month: `${String(month).padStart(2, "0")}/${year}`,
+    month: monthStr,
     baseSalary,
     bonus,
     deduction,
     netSalary: Math.max(netSalary, 0),
     totalHours,
+    totalProducts,
     status: "Đang xử lý",
     paidDate: null,
   };

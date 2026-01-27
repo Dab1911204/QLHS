@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DataContext from "./DataContext";
+import {DataContext} from "./DataContext";
 import initialData, {
   // Employee helpers
   addEmployee as addEmployeeHelper,
@@ -13,7 +13,7 @@ import initialData, {
   addAttendance as addAttendanceHelper,
   updateAttendance as updateAttendanceHelper,
   deleteAttendance as deleteAttendanceHelper,
-} from "../data/data.js";
+} from "../../data/data"
 
 export const DataProvider = ({ children }) => {
   // STATE

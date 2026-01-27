@@ -3,7 +3,7 @@ import AttendanceDetailModal from "../../components/ui/Model/AttendanceDetailMod
 import CheckInModal from "../../components/ui/Model/CheckInModal";
 import Header from "../../components/Tables/Header";
 import AttendanceBody from "../../components/Tables/Body/AttendanceBody";
-import { useData } from "../../contexts/DataContext";
+import { useData } from "../../contexts/Data/DataContext";
 import {
   // getAllEmployees, // We can access data.employees directly
   getAttendanceByEmployeeId,

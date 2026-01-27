@@ -3,6 +3,7 @@ import { VscTools } from "react-icons/vsc";
 
 
 const formatCurrency = (value) => {
+  if (value === null || value === undefined || isNaN(value)) return "0 ₫";
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -32,6 +33,11 @@ const PayrollBody = ({ items, onViewDetail, onUpdatePayroll }) => {
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
                 {payroll.role}
               </span>
+            </td>
+            <td className="p-4 text-right font-medium text-gray-900">
+              {["Manager", "Leader", "Support"].includes(payroll.role)
+                ? `${payroll.totalHours || 0} giờ`
+                : `${payroll.totalProducts || 0} phiếu`}
             </td>
             <td className="p-4 text-right font-medium text-gray-900">
               {formatCurrency(payroll.baseSalary)}

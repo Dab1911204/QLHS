@@ -4,7 +4,7 @@ import ModelPayrollDetail from "../../components/ui/Model/ModelPayrollDetail";
 import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
 import PayrollBody from "../../components/Tables/Body/PayrollBody";
 import Header from "../../components/Tables/Header";
-import { useData } from "../../contexts/DataContext";
+import { useData } from "../../contexts/Data/DataContext";
 import {
   getAllPayrolls,
   calculateMonthlyPayroll,
@@ -14,6 +14,7 @@ const hearderTitles = [
   "Mã NV",
   "Nhân viên",
   "Vai trò",
+  "Giờ/Phiếu",
   "Lương cơ bản",
   "Thưởng",
   "Khấu trừ",
@@ -31,8 +32,10 @@ const PayrollList = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedPayroll, setSelectedPayroll] = useState(null);
+  const [filterMonth, setFilterMonth] = useState("all");
 
   const allPayrollRecords = getAllPayrolls(data);
+  console.log("All Payroll Records:", allPayrollRecords);
 
   const records = useMemo(() => {
     return allPayrollRecords.filter((record) => {
@@ -41,14 +44,17 @@ const PayrollList = () => {
         .includes(search.toLowerCase());
 
       const matchPosition =
-        filterPosition === "all" || record.position === filterPosition;
+        filterPosition === "all" || record.role === filterPosition;
 
       const matchStatus =
         filterStatus === "all" || record.status === filterStatus;
 
-      return matchSearch && matchPosition && matchStatus;
+      const matchMonth =
+        filterMonth === "all" || record.month === filterMonth;
+
+      return matchSearch && matchPosition && matchStatus && matchMonth;
     });
-  }, [search, filterPosition, filterStatus, allPayrollRecords]);
+  }, [search, filterPosition, filterStatus, filterMonth, allPayrollRecords]);
 
   const handleShowAdd = () => {
     setSelectedPayroll(null);
@@ -66,35 +72,30 @@ const PayrollList = () => {
   };
 
   const handleAddPayroll = (newPayroll) => {
-    // Nếu không có baseSalary (tính từ giờ làm)
-    if (!newPayroll.baseSalary || newPayroll.baseSalary === 0) {
-      const { month: monthStr, employeeId, bonus, deduction } = newPayroll;
-      const [month, year] = monthStr.split("/");
-      
-      const calculatedPayroll = calculateMonthlyPayroll(
-        data, 
-        employeeId, 
-        parseInt(month), 
-        parseInt(year), 
-        bonus || 0, 
-        deduction || 0
+    // Luôn tính lương cơ bản từ giờ làm thực tế
+    const { month: monthStr, employeeId, bonus, deduction } = newPayroll;
+    const [month, year] = monthStr.split("/");
+    
+    const calculatedPayroll = calculateMonthlyPayroll(
+      data, 
+      employeeId, 
+      parseInt(month), 
+      parseInt(year), 
+      bonus || 0, 
+      deduction || 0
+    );
+
+    if (calculatedPayroll) {
+      // Kiểm tra xem bảng lương đã tồn tại chưa
+      const existingPayroll = data.payrolls.find(
+        (p) => p.employeeId === employeeId && p.month === calculatedPayroll.month
       );
 
-      if (calculatedPayroll) {
-        // Kiểm tra xem bảng lương đã tồn tại chưa
-        const existingPayroll = data.payrolls.find(
-          (p) => p.employeeId === employeeId && p.month === calculatedPayroll.month
-        );
-
-        if (existingPayroll) {
-           updatePayroll(existingPayroll.id, calculatedPayroll);
-        } else {
-           addPayroll(calculatedPayroll);
-        }
+      if (existingPayroll) {
+         updatePayroll(existingPayroll.id, calculatedPayroll);
+      } else {
+         addPayroll(calculatedPayroll);
       }
-    } else {
-      // Thêm bảng lương thông thường
-      addPayroll(newPayroll);
     }
     setShowModalAdd(false);
   };
@@ -102,32 +103,6 @@ const PayrollList = () => {
   const handleUpdatePayroll = (payrollId, updatedData) => {
     updatePayroll(payrollId, updatedData);
     setShowUpdateModal(false);
-  };
-
-  const handleRecalculateAllPayroll = () => {
-    // Cập nhật lương tất cả nhân viên cho tháng 12/2025 dựa trên giờ làm thực tế
-    const employees = data.employees;
-    
-    let count = 0;
-    for (const emp of employees) {
-      const calculatedPayroll = calculateMonthlyPayroll(data, emp.id, 12, 2025, 0, 0);
-      
-      if (calculatedPayroll) {
-        const existingPayroll = data.payrolls.find(
-          (p) => p.employeeId === emp.id && p.month === calculatedPayroll.month
-        );
-
-        if (existingPayroll) {
-           // Only update if changed, but simpler to just update
-           updatePayroll(existingPayroll.id, calculatedPayroll);
-        } else {
-           addPayroll(calculatedPayroll);
-        }
-        count++;
-      }
-    }
-    
-    alert(`✅ Đã tính toán và cập nhật lương cho ${count} nhân viên!`);
   };
 
   return (
@@ -153,11 +128,23 @@ const PayrollList = () => {
             className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
           >
             <option value="all">Tất cả vị trí</option>
+            <option value="Manager">Manager</option>
             <option value="Leader">Leader</option>
-            <option value="Senior Developer">Senior Developer</option>
-            <option value="Developer">Developer</option>
-            <option value="Tester">Tester</option>
-            <option value="Intern">Intern</option>
+            <option value="Support">Support</option>
+            <option value="Employee">Employee</option>
+          </select>
+          <select
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
+          >
+            <option value="all">Tất cả tháng</option>
+            <option value="12/2025">Tháng 12/2025</option>
+            <option value="11/2025">Tháng 11/2025</option>
+            <option value="10/2025">Tháng 10/2025</option>
+            <option value="09/2025">Tháng 09/2025</option>
+            <option value="08/2025">Tháng 08/2025</option>
+            <option value="07/2025">Tháng 07/2025</option>
           </select>
           <select
             value={filterStatus}
@@ -173,12 +160,6 @@ const PayrollList = () => {
             className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 font-medium transition shadow-md"
           >
             + Thêm bảng lương
-          </button>
-          <button
-            onClick={handleRecalculateAllPayroll}
-            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 font-medium transition shadow-md"
-          >
-            🔄 Cập nhật lương theo giờ làm
           </button>
         </div>
 

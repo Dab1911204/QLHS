@@ -5,7 +5,7 @@ import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
 import ModelDelete from "../../components/ui/Model/ModelDelete";
 import Header from "../../components/Tables/Header";
 import EmployeesBody from "../../components/Tables/Body/EmployeesBody";
-import { useData } from "../../contexts/DataContext";
+import { useData } from "../../contexts/Data/DataContext";
 
 const headerLabels = [
   "Mã NV",

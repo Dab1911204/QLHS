@@ -1,17 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { MdKeyboardArrowDown, MdOutlineCategory } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
-import { AiOutlineProduct } from "react-icons/ai";
 import { useMemo, useState } from "react";
 import { useSidebar } from "../contexts/Sidebar/SidebarContext";
 
 const initialMenuItems = [
   { name: "Trang chủ", path: "/", icon: <IoHomeOutline size={15} /> },
-  {
-    name: "Quản lý hồ sơ",
-    icon: <AiOutlineProduct size={15} />,
-    path: "/documents"
-  },
   {
     name: "Quản lý nhân sự",
     icon: <MdOutlineCategory size={15} />,
