@@ -1,6 +1,6 @@
 import { FaRegEye } from "react-icons/fa";
 import { VscTools } from "react-icons/vsc";
-import { getEmployeeRoleByPayroll } from "../../../data/data";
+
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -30,7 +30,7 @@ const PayrollBody = ({ items, onViewDetail, onUpdatePayroll }) => {
             </td>
             <td className="p-4">
               <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                {getEmployeeRoleByPayroll(payroll.id).role}
+                {payroll.role}
               </span>
             </td>
             <td className="p-4 text-right font-medium text-gray-900">

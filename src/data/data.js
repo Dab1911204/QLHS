@@ -369,50 +369,6 @@ const initialData = {
       unit: "assignment",
     },
   ],
-
-  // ===== TÀI LIỆU (Liên kết với nhân viên qua employeeId) =====
-  documents: [
-    {
-      id: 1,
-      employeeId: 1,
-      title: "Hợp đồng lao động",
-      type: "contract",
-      uploadDate: "2025-01-01",
-      expiryDate: "2026-01-01",
-      status: "Còn hiệu lực",
-      fileUrl: "/documents/contract_1.pdf",
-    },
-    {
-      id: 2,
-      employeeId: 1,
-      title: "Bằng cấp chuyên môn",
-      type: "certificate",
-      uploadDate: "2025-01-05",
-      expiryDate: null,
-      status: "Còn hiệu lực",
-      fileUrl: "/documents/certificate_1.pdf",
-    },
-    {
-      id: 3,
-      employeeId: 2,
-      title: "Hợp đồng lao động",
-      type: "contract",
-      uploadDate: "2025-01-02",
-      expiryDate: "2026-01-02",
-      status: "Còn hiệu lực",
-      fileUrl: "/documents/contract_2.pdf",
-    },
-    {
-      id: 4,
-      employeeId: 3,
-      title: "Hợp đồng lao động",
-      type: "contract",
-      uploadDate: "2025-01-03",
-      expiryDate: "2026-01-03",
-      status: "Còn hiệu lực",
-      fileUrl: "/documents/contract_3.pdf",
-    },
-  ],
 };
 
 // ============================================================
@@ -448,6 +404,9 @@ export const getPayrollById = (data, payrollId) => {
 /**
  * Lấy tất cả bảng lương
  */
+/**
+ * Lấy tất cả bảng lương
+ */
 export const getAllPayrolls = (data) => {
   return data.payrolls.map((payroll) => {
     const employee = getEmployeeById(data, payroll.employeeId);
@@ -455,6 +414,7 @@ export const getAllPayrolls = (data) => {
       ...payroll,
       name: employee?.name,
       position: employee?.position,
+      role: employee?.role,
     };
   });
 };
@@ -483,33 +443,6 @@ export const getAllAttendance = (data) => {
       ...att,
       name: employee?.name,
       position: employee?.position,
-    };
-  });
-};
-
-/**
- * Lấy tài liệu của một nhân viên
- */
-export const getDocumentsByEmployeeId = (data, employeeId) => {
-  return data.documents.filter((doc) => doc.employeeId === employeeId);
-};
-
-/**
- * Lấy tài liệu theo ID
- */
-export const getDocumentById = (data, documentId) => {
-  return data.documents.find((d) => d.id === documentId);
-};
-
-/**
- * Lấy tất cả tài liệu
- */
-export const getAllDocuments = (data) => {
-  return data.documents.map((doc) => {
-    const employee = getEmployeeById(data, doc.employeeId);
-    return {
-      ...doc,
-      employeeName: employee?.name,
     };
   });
 };
@@ -602,32 +535,6 @@ export const addAttendance = (data, newAttendance) => {
   };
 };
 
-/**
- * Thêm tài liệu mới
- */
-export const addDocument = (data, newDocument) => {
-  const nextId =
-    data.documents.length > 0
-      ? Math.max(...data.documents.map((d) => d.id)) + 1
-      : 1;
-
-  const document = {
-    id: nextId,
-    employeeId: newDocument.employeeId,
-    title: newDocument.title,
-    type: newDocument.type,
-    uploadDate: newDocument.uploadDate,
-    expiryDate: newDocument.expiryDate || null,
-    status: newDocument.status || "Còn hiệu lực",
-    fileUrl: newDocument.fileUrl || null,
-  };
-
-  return {
-    ...data,
-    documents: [...data.documents, document],
-  };
-};
-
 // ============================================================
 // UPDATE OPERATIONS - Cập nhật dữ liệu
 // ============================================================
@@ -668,18 +575,6 @@ export const updateAttendance = (data, attendanceId, updatedData) => {
   };
 };
 
-/**
- * Cập nhật tài liệu
- */
-export const updateDocument = (data, documentId, updatedData) => {
-  return {
-    ...data,
-    documents: data.documents.map((doc) =>
-      doc.id === documentId ? { ...doc, ...updatedData } : doc,
-    ),
-  };
-};
-
 // ============================================================
 // DELETE OPERATIONS - Xóa dữ liệu
 // ============================================================
@@ -714,16 +609,6 @@ export const deleteAttendance = (data, attendanceId) => {
   return {
     ...data,
     attendance: data.attendance.filter((a) => a.id !== attendanceId),
-  };
-};
-
-/**
- * Xóa tài liệu
- */
-export const deleteDocument = (data, documentId) => {
-  return {
-    ...data,
-    documents: data.documents.filter((d) => d.id !== documentId),
   };
 };
 
@@ -870,14 +755,15 @@ export const updatePayrollByHours = (data, employeeId, month, year, bonus = 0, d
 
 /**
  * Lấy vai trò/position của nhân viên từ payroll
+ * @param {Object} data - Database object
  * @param {Number} payrollId - ID của bảng lương
  * @returns {Object|null} - {role, position, name, email, phone, department} hoặc null nếu không tìm thấy
  */
-export const getEmployeeRoleByPayroll = (payrollId) => {
-  const payroll = getPayrollById(initialData, payrollId);
+export const getEmployeeRoleByPayroll = (data, payrollId) => {
+  const payroll = getPayrollById(data, payrollId);
   if (!payroll) return null;
 
-  const employee = getEmployeeById(initialData, payroll.employeeId);
+  const employee = getEmployeeById(data, payroll.employeeId);
   if (!employee) return null;
 
   return {

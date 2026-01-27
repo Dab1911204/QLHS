@@ -3,10 +3,10 @@ import AttendanceDetailModal from "../../components/ui/Model/AttendanceDetailMod
 import CheckInModal from "../../components/ui/Model/CheckInModal";
 import Header from "../../components/Tables/Header";
 import AttendanceBody from "../../components/Tables/Body/AttendanceBody";
-import initialData, {
-  getAllEmployees,
+import { useData } from "../../contexts/DataContext";
+import {
+  // getAllEmployees, // We can access data.employees directly
   getAttendanceByEmployeeId,
-  addAttendance,
 } from "../../data/data";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -24,7 +24,7 @@ const hearerLabels = [
 ];
 
 const AttendanceList = () => {
-  const [data, setData] = useState(initialData);
+  const { data, addAttendance } = useData();
   const [search, setSearch] = useState("");
   const [filterMonth, setFilterMonth] = useState(12); // Mặc định tháng 12 (dữ liệu hiện tại)
   const [filterYear, setFilterYear] = useState(2025); // Mặc định năm 2025
@@ -37,7 +37,7 @@ const AttendanceList = () => {
   const [workDescription, setWorkDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
 
-  const employees = getAllEmployees(data);
+  const employees = data.employees;
 
   const filteredEmployees = useMemo(() => {
     return employees.filter((emp) =>
@@ -120,8 +120,7 @@ const AttendanceList = () => {
       unit: "item",
     };
 
-    const updatedData = addAttendance(data, newAttendance);
-    setData(updatedData);
+    addAttendance(newAttendance);
 
     alert(
       `✅ Chấm công thành công!\n⏰ Giờ vào: ${checkInTime}\n⏰ Giờ ra: ${checkOutTime || "Chưa chấm"}\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity}\n⌛ Giờ làm: ${newAttendance.workHours}h`,

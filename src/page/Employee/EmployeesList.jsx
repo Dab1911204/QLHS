@@ -5,12 +5,7 @@ import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
 import ModelDelete from "../../components/ui/Model/ModelDelete";
 import Header from "../../components/Tables/Header";
 import EmployeesBody from "../../components/Tables/Body/EmployeesBody";
-import initialData, {
-  getAllEmployees,
-  addEmployee,
-  updateEmployee,
-  deleteEmployee,
-} from "../../data/data";
+import { useData } from "../../contexts/DataContext";
 
 const headerLabels = [
   "Mã NV",
@@ -21,7 +16,7 @@ const headerLabels = [
 ];
 
 const EmployeesList = () => {
-  const [data, setData] = useState(initialData);
+  const { data, addEmployee, updateEmployee, deleteEmployee } = useData();
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -31,7 +26,7 @@ const EmployeesList = () => {
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  const allRecords = getAllEmployees(data);
+  const allRecords = data.employees;
 
   const records = useMemo(() => {
     return allRecords.filter((record) => {
@@ -64,21 +59,18 @@ const EmployeesList = () => {
   };
 
   const handleAddEmployee = (newEmployee) => {
-    const updatedData = addEmployee(data, newEmployee);
-    setData(updatedData);
+    addEmployee(newEmployee);
     setShowModalAdd(false);
   };
 
   const handleUpdateEmployee = (employeeId, updatedData) => {
-    const newData = updateEmployee(data, employeeId, updatedData);
-    setData(newData);
+    updateEmployee(employeeId, updatedData);
     setShowModalEdit(false);
   };
 
   const handleDeleteEmployee = () => {
     if (selectedEmployee) {
-      const newData = deleteEmployee(data, selectedEmployee.id);
-      setData(newData);
+      deleteEmployee(selectedEmployee.id);
       setShowModalDelete(false);
       setSelectedEmployee(null);
     }

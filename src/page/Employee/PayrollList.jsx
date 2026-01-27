@@ -4,11 +4,10 @@ import ModelPayrollDetail from "../../components/ui/Model/ModelPayrollDetail";
 import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
 import PayrollBody from "../../components/Tables/Body/PayrollBody";
 import Header from "../../components/Tables/Header";
-import initialData, {
+import { useData } from "../../contexts/DataContext";
+import {
   getAllPayrolls,
-  addPayroll,
-  updatePayroll,
-  updatePayrollByHours,
+  calculateMonthlyPayroll,
 } from "../../data/data";
 
 const hearderTitles = [
@@ -24,7 +23,7 @@ const hearderTitles = [
 ];
 
 const PayrollList = () => {
-  const [data, setData] = useState(initialData);
+  const { data, addPayroll, updatePayroll } = useData();
   const [search, setSearch] = useState("");
   const [filterPosition, setFilterPosition] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -33,7 +32,7 @@ const PayrollList = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedPayroll, setSelectedPayroll] = useState(null);
 
-  const allPayrollRecords = getAllPayrolls(data)
+  const allPayrollRecords = getAllPayrolls(data);
 
   const records = useMemo(() => {
     return allPayrollRecords.filter((record) => {
@@ -69,41 +68,66 @@ const PayrollList = () => {
   const handleAddPayroll = (newPayroll) => {
     // Nếu không có baseSalary (tính từ giờ làm)
     if (!newPayroll.baseSalary || newPayroll.baseSalary === 0) {
-      const [month, year] = newPayroll.month.split("/");
-      const updatedData = updatePayrollByHours(
-        data,
-        newPayroll.employeeId,
-        parseInt(month),
-        parseInt(year),
-        newPayroll.bonus || 0,
-        newPayroll.deduction || 0
+      const { month: monthStr, employeeId, bonus, deduction } = newPayroll;
+      const [month, year] = monthStr.split("/");
+      
+      const calculatedPayroll = calculateMonthlyPayroll(
+        data, 
+        employeeId, 
+        parseInt(month), 
+        parseInt(year), 
+        bonus || 0, 
+        deduction || 0
       );
-      setData(updatedData);
+
+      if (calculatedPayroll) {
+        // Kiểm tra xem bảng lương đã tồn tại chưa
+        const existingPayroll = data.payrolls.find(
+          (p) => p.employeeId === employeeId && p.month === calculatedPayroll.month
+        );
+
+        if (existingPayroll) {
+           updatePayroll(existingPayroll.id, calculatedPayroll);
+        } else {
+           addPayroll(calculatedPayroll);
+        }
+      }
     } else {
       // Thêm bảng lương thông thường
-      const updatedData = addPayroll(data, newPayroll);
-      setData(updatedData);
+      addPayroll(newPayroll);
     }
     setShowModalAdd(false);
   };
 
   const handleUpdatePayroll = (payrollId, updatedData) => {
-    const newData = updatePayroll(data, payrollId, updatedData);
-    setData(newData);
+    updatePayroll(payrollId, updatedData);
     setShowUpdateModal(false);
   };
 
   const handleRecalculateAllPayroll = () => {
     // Cập nhật lương tất cả nhân viên cho tháng 12/2025 dựa trên giờ làm thực tế
-    let updatedData = data;
     const employees = data.employees;
     
+    let count = 0;
     for (const emp of employees) {
-      updatedData = updatePayrollByHours(updatedData, emp.id, 12, 2025, 0, 0);
+      const calculatedPayroll = calculateMonthlyPayroll(data, emp.id, 12, 2025, 0, 0);
+      
+      if (calculatedPayroll) {
+        const existingPayroll = data.payrolls.find(
+          (p) => p.employeeId === emp.id && p.month === calculatedPayroll.month
+        );
+
+        if (existingPayroll) {
+           // Only update if changed, but simpler to just update
+           updatePayroll(existingPayroll.id, calculatedPayroll);
+        } else {
+           addPayroll(calculatedPayroll);
+        }
+        count++;
+      }
     }
     
-    setData(updatedData);
-    alert("✅ Đã cập nhật lương tất cả nhân viên theo giờ làm thực tế tháng 12/2025!");
+    alert(`✅ Đã tính toán và cập nhật lương cho ${count} nhân viên!`);
   };
 
   return (
