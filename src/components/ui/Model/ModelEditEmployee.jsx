@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Modal from "../../common/Model";
+import { Input, Select, DatePicker } from "antd";
+import dayjs from "dayjs";
 
 const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
   const initialFormData = {
@@ -26,11 +28,10 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
     };
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
@@ -78,16 +79,11 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
           <label className="block text-sm font-semibold text-gray-700 mb-1">
             Họ tên *
           </label>
-          <input
-            type="text"
-            name="name"
+          <Input
             value={formData.name}
-            onChange={handleChange}
+            onChange={(e) => handleChange("name", e.target.value)}
             placeholder="Nguyễn Văn A"
             required
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                       focus:outline-none focus:ring-2 focus:ring-green-400
-                       focus:border-transparent transition"
           />
         </div>
 
@@ -97,31 +93,23 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Email *
             </label>
-            <input
+            <Input
               type="email"
-              name="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={(e) => handleChange("email", e.target.value)}
               placeholder="user@example.com"
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition"
             />
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Điện thoại
             </label>
-            <input
+            <Input
               type="tel"
-              name="phone"
               value={formData.phone}
-              onChange={handleChange}
+              onChange={(e) => handleChange("phone", e.target.value)}
               placeholder="0123456789"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition"
             />
           </div>
         </div>
@@ -131,15 +119,10 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
           <label className="block text-sm font-semibold text-gray-700 mb-1">
             Mật khẩu
           </label>
-          <input
-            type="password"
-            name="password"
+          <Input.Password
             value={formData.password}
-            onChange={handleChange}
+            onChange={(e) => handleChange("password", e.target.value)}
             placeholder="Nhập mật khẩu mới (để trống nếu không thay đổi)"
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                       focus:outline-none focus:ring-2 focus:ring-green-400
-                       focus:border-transparent transition"
           />
           <p className="text-xs text-gray-500 mt-1">Mật khẩu phải có ít nhất 6 ký tự</p>
         </div>
@@ -150,35 +133,31 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Vai trò
             </label>
-            <select
-              name="role"
+            <Select
               value={formData.role}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition bg-white"
-            >
-              <option value="Manager">Manager</option>
-              <option value="Leader">Leader</option>
-              <option value="Support">Support</option>
-              <option value="Employee">Employee</option>
-            </select>
+              onChange={(value) => handleChange("role", value)}
+              className="w-full"
+              options={[
+                { value: "Manager", label: "Manager" },
+                { value: "Leader", label: "Leader" },
+                { value: "Support", label: "Support" },
+                { value: "Employee", label: "Employee" },
+              ]}
+            />
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Trạng thái
             </label>
-            <select
-              name="status"
+            <Select
               value={formData.status}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                         focus:outline-none focus:ring-2 focus:ring-green-400
-                         focus:border-transparent transition bg-white"
-            >
-              <option value="Đang tham gia">Đang tham gia</option>
-              <option value="Đã rút">Đã rút</option>
-            </select>
+              onChange={(value) => handleChange("status", value)}
+              className="w-full"
+              options={[
+                { value: "Đang tham gia", label: "Đang tham gia" },
+                { value: "Đã rút", label: "Đã rút" },
+              ]}
+            />
           </div>
         </div>
 
@@ -187,14 +166,15 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
           <label className="block text-sm font-semibold text-gray-700 mb-1">
             Ngày bắt đầu
           </label>
-          <input
-            type="date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5
-                       focus:outline-none focus:ring-2 focus:ring-green-400
-                       focus:border-transparent transition"
+          <DatePicker
+            className="w-full"
+            value={formData.startDate ? dayjs(formData.startDate) : null}
+            onChange={(date) =>
+              handleChange(
+                "startDate",
+                date ? date.format("YYYY-MM-DD") : ""
+              )
+            }
           />
         </div>
 

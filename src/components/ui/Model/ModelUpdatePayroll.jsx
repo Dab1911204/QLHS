@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Model from "../../common/Model";
+import { Input, InputNumber, Select } from "antd";
 import { useData } from "../../../contexts/Data/DataContext";
 import {
   getTotalHoursByEmployeeAndMonth,
@@ -68,11 +69,10 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
     }
   }, [payroll, isOpen, data]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
@@ -125,11 +125,9 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Lương cơ bản (VND) - Tính tự động từ giờ/phiếu
           </label>
-          <input
-            type="text"
+          <Input
             disabled
             value={formatCurrency(payrollInfo.baseSalary)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
           />
         </div>
 
@@ -138,24 +136,26 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Thưởng (VND)
             </label>
-            <input
-              type="number"
-              name="bonus"
-              value={formData.bonus}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <InputNumber
+              className="w-full"
+              value={parseInt(formData.bonus || "0")}
+              min={0}
+              onChange={(value) =>
+                handleChange("bonus", value !== null ? String(value) : "0")
+              }
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Khấu trừ (VND)
             </label>
-            <input
-              type="number"
-              name="deduction"
-              value={formData.deduction}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <InputNumber
+              className="w-full"
+              value={parseInt(formData.deduction || "0")}
+              min={0}
+              onChange={(value) =>
+                handleChange("deduction", value !== null ? String(value) : "0")
+              }
             />
           </div>
         </div>
@@ -169,15 +169,15 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Trạng thái
           </label>
-          <select
-            name="status"
+          <Select
             value={formData.status}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
-            <option value="Đang xử lý">Đang xử lý</option>
-            <option value="Đã thanh toán">Đã thanh toán</option>
-          </select>
+            onChange={(value) => handleChange("status", value)}
+            className="w-full"
+            options={[
+              { value: "Đang xử lý", label: "Đang xử lý" },
+              { value: "Đã thanh toán", label: "Đã thanh toán" },
+            ]}
+          />
         </div>
 
         <div className="flex gap-4 mt-8">

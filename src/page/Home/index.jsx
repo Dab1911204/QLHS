@@ -1,6 +1,5 @@
-import { useState } from "react";
 import StatCard from "../../components/ui/Card";
-import initialData, {
+import {
   getAllEmployees,
   getAllAttendance,
   getEmployeeStats,
@@ -8,9 +7,10 @@ import initialData, {
   getAttendanceStats,
   getTopSalaryEmployee,
 } from "../../data/data";
+import { useData } from "../../contexts/Data/DataContext";
 
 const HomePage = () => {
-  const [data] = useState(initialData);
+  const { data } = useData();
 
   const allEmployees = getAllEmployees(data);
   const allAttendanceRecords = getAllAttendance(data);

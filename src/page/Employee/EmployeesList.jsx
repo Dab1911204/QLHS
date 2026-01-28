@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Input, Select } from "antd";
 import ModelAddEmployee from "../../components/ui/Model/ModelAddEmployee";
 import ModelDetailEmployee from "../../components/ui/Model/ModelDetailEmployee";
 import ModelEditEmployee from "../../components/ui/Model/ModelEditEmployee";
@@ -81,37 +82,37 @@ const EmployeesList = () => {
 
         {/* ===== Tìm kiếm ===== */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <input
-            type="text"
+          <Input
             placeholder="🔍 Tìm kiếm nhân sự..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
           />
         </div>
 
         {/* ===== Bộ lọc ===== */}
         <div className="flex gap-4 flex-wrap">
-          <select
+          <Select
             value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
-          >
-            <option value="all">Tất cả vai trò</option>
-            <option value="Manager">Manager</option>
-            <option value="Leader">Leader</option>
-            <option value="Support">Support</option>
-            <option value="Employee">Employee</option>
-          </select>
-          <select
+            onChange={(value) => setFilterRole(value)}
+            className="min-w-[180px]"
+            options={[
+              { value: "all", label: "Tất cả vai trò" },
+              { value: "Manager", label: "Manager" },
+              { value: "Leader", label: "Leader" },
+              { value: "Support", label: "Support" },
+              { value: "Employee", label: "Employee" },
+            ]}
+          />
+          <Select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="Đang tham gia">Đang tham gia</option>
-            <option value="Đã rút">Đã rút</option>
-          </select>
+            onChange={(value) => setFilterStatus(value)}
+            className="min-w-[200px]"
+            options={[
+              { value: "all", label: "Tất cả trạng thái" },
+              { value: "Đang tham gia", label: "Đang tham gia" },
+              { value: "Đã rút", label: "Đã rút" },
+            ]}
+          />
           <button
             onClick={() => setShowModalAdd(true)}
             className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-lg hover:from-red-600 hover:to-red-700 cursor-pointer ml-auto font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105"

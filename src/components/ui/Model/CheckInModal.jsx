@@ -1,18 +1,10 @@
 import Model from "../../common/Model";
+import { TimePicker, Input, InputNumber, Select } from "antd";
+import dayjs from "dayjs";
 
 const UNIT_OPTIONS = [
-  { value: "module", label: "Module" },
-  { value: "bug", label: "Bug" },
-  { value: "file", label: "File" },
-  { value: "test", label: "Test" },
-  { value: "endpoint", label: "Endpoint" },
-  { value: "screen", label: "Screen" },
-  { value: "component", label: "Component" },
-  { value: "test case", label: "Test Case" },
-  { value: "deployment", label: "Deployment" },
-  { value: "meeting", label: "Meeting" },
-  { value: "exercise", label: "Exercise" },
-  { value: "assignment", label: "Assignment" },
+  { value: "phiếu", label: "Nhập tài liệu" },
+  { value: "bug", label: "Scan" },
 ];
 
 const CheckInModal = ({
@@ -23,7 +15,6 @@ const CheckInModal = ({
   workDescription,
   productQuantity,
   workUnit = "module",
-  workResults = [],
   onCheckInTimeChange,
   onCheckOutTimeChange,
   onWorkDescriptionChange,
@@ -34,12 +25,24 @@ const CheckInModal = ({
 }) => {
   if (!isOpen) return null;
 
-  // Tính giờ làm nếu có cả giờ vào và giờ ra
+  // Tính giờ làm nếu có cả giờ vào và giờ ra (trừ thời gian nghỉ trưa 12h-13h)
   let workHours = 0;
   if (checkInTime && checkOutTime) {
     const [inHour, inMin] = checkInTime.split(":").map(Number);
     const [outHour, outMin] = checkOutTime.split(":").map(Number);
-    workHours = (outHour + outMin / 60) - (inHour + inMin / 60);
+    const checkInDecimal = inHour + inMin / 60;
+    const checkOutDecimal = outHour + outMin / 60;
+
+    if (checkOutDecimal > checkInDecimal) {
+      const rawHours = checkOutDecimal - checkInDecimal;
+      const breakStart = 12;
+      const breakEnd = 13;
+      const overlap =
+        Math.max(0, Math.min(checkOutDecimal, breakEnd) - Math.max(checkInDecimal, breakStart));
+      workHours = rawHours - overlap;
+    } else {
+      workHours = 0;
+    }
   }
 
   // Kiểm tra xem có muộn không (sau 8:30)
@@ -67,179 +70,39 @@ const CheckInModal = ({
         {/* Form chấm công */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {/* Giờ vào - Clock Picker */}
+            {/* Giờ vào - TimePicker antd */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 ⏰ Giờ vào
               </label>
-              <div className={`border-2 rounded-lg p-4 transition ${
-                isLate
-                  ? "border-orange-400 bg-orange-50"
-                  : "border-gray-200 bg-white"
-              }`}>
-                <div className="flex items-center justify-center gap-2">
-                  <div className="flex flex-col items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkInTime.split(":").map(Number);
-                        const newHour = h === 23 ? 0 : h + 1;
-                        onCheckInTimeChange(`${String(newHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▲
-                    </button>
-                    <input
-                      type="number"
-                      value={checkInTime.split(":")[0]}
-                      onChange={(e) => {
-                        const hour = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
-                        const [, m] = checkInTime.split(":").map(Number);
-                        onCheckInTimeChange(`${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="w-12 text-center text-2xl font-bold border-0 bg-transparent focus:outline-none"
-                      min="0"
-                      max="23"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkInTime.split(":").map(Number);
-                        const newHour = h === 0 ? 23 : h - 1;
-                        onCheckInTimeChange(`${String(newHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▼
-                    </button>
-                  </div>
-                  <span className="text-2xl font-bold">:</span>
-                  <div className="flex flex-col items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkInTime.split(":").map(Number);
-                        const newMin = m === 59 ? 0 : m + 5;
-                        onCheckInTimeChange(`${String(h).padStart(2, "0")}:${String(newMin).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▲
-                    </button>
-                    <input
-                      type="number"
-                      value={checkInTime.split(":")[1]}
-                      onChange={(e) => {
-                        const min = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
-                        const [h] = checkInTime.split(":").map(Number);
-                        onCheckInTimeChange(`${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`);
-                      }}
-                      className="w-12 text-center text-2xl font-bold border-0 bg-transparent focus:outline-none"
-                      min="0"
-                      max="59"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkInTime.split(":").map(Number);
-                        const newMin = m === 0 ? 59 : m - 5;
-                        onCheckInTimeChange(`${String(h).padStart(2, "0")}:${String(newMin).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▼
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <TimePicker
+                value={checkInTime ? dayjs(checkInTime, "HH:mm") : null}
+                onChange={(time) => {
+                  onCheckInTimeChange(time ? time.format("HH:mm") : "");
+                }}
+                format="HH:mm"
+                className="w-full"
+              />
               {isLate && checkInTime && (
-                <p className="text-xs text-orange-600 mt-1">⚠️ Vào muộn (sau 8:30)</p>
+                <p className="text-xs text-orange-600 mt-1">
+                  ⚠️ Vào muộn (sau 8:00)
+                </p>
               )}
             </div>
 
-            {/* Giờ ra - Clock Picker */}
+            {/* Giờ ra - TimePicker antd */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 ⏰ Giờ ra
               </label>
-              <div className="border-2 border-gray-200 bg-white rounded-lg p-4">
-                <div className="flex items-center justify-center gap-2">
-                  <div className="flex flex-col items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkOutTime.split(":").map(Number);
-                        const newHour = h === 23 ? 0 : h + 1;
-                        onCheckOutTimeChange(`${String(newHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▲
-                    </button>
-                    <input
-                      type="number"
-                      value={checkOutTime.split(":")[0]}
-                      onChange={(e) => {
-                        const hour = Math.max(0, Math.min(23, parseInt(e.target.value) || 0));
-                        const [, m] = checkOutTime.split(":").map(Number);
-                        onCheckOutTimeChange(`${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="w-12 text-center text-2xl font-bold border-0 bg-transparent focus:outline-none"
-                      min="0"
-                      max="23"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkOutTime.split(":").map(Number);
-                        const newHour = h === 0 ? 23 : h - 1;
-                        onCheckOutTimeChange(`${String(newHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▼
-                    </button>
-                  </div>
-                  <span className="text-2xl font-bold">:</span>
-                  <div className="flex flex-col items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkOutTime.split(":").map(Number);
-                        const newMin = m === 59 ? 0 : m + 5;
-                        onCheckOutTimeChange(`${String(h).padStart(2, "0")}:${String(newMin).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▲
-                    </button>
-                    <input
-                      type="number"
-                      value={checkOutTime.split(":")[1]}
-                      onChange={(e) => {
-                        const min = Math.max(0, Math.min(59, parseInt(e.target.value) || 0));
-                        const [h] = checkOutTime.split(":").map(Number);
-                        onCheckOutTimeChange(`${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`);
-                      }}
-                      className="w-12 text-center text-2xl font-bold border-0 bg-transparent focus:outline-none"
-                      min="0"
-                      max="59"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const [h, m] = checkOutTime.split(":").map(Number);
-                        const newMin = m === 0 ? 59 : m - 5;
-                        onCheckOutTimeChange(`${String(h).padStart(2, "0")}:${String(newMin).padStart(2, "0")}`);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 p-1"
-                    >
-                      ▼
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <TimePicker
+                value={checkOutTime ? dayjs(checkOutTime, "HH:mm") : null}
+                onChange={(time) => {
+                  onCheckOutTimeChange(time ? time.format("HH:mm") : "");
+                }}
+                format="HH:mm"
+                className="w-full"
+              />
             </div>
           </div>
 
@@ -257,12 +120,11 @@ const CheckInModal = ({
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               📝 Mô tả công việc
             </label>
-            <textarea
+            <Input.TextArea
               value={workDescription}
               onChange={(e) => onWorkDescriptionChange(e.target.value)}
               placeholder="Mô tả chi tiết công việc đã làm trong hôm nay..."
-              rows="3"
-              className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"
+              rows={3}
             />
           </div>
 
@@ -271,31 +133,28 @@ const CheckInModal = ({
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 📊 Số lượng hoàn thành
               </label>
-              <input
-                type="number"
+              <InputNumber
                 value={productQuantity}
-                onChange={(e) => onProductQuantityChange(e.target.value)}
+                onChange={(value) => onProductQuantityChange(value ?? "")}
                 placeholder="Nhập số lượng..."
-                min="0"
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                min={0}
+                className="w-full"
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📦 Đơn vị sản phẩm
+                📦 Công việc
               </label>
-              <select
+              <Select
                 value={workUnit}
-                onChange={(e) => onWorkUnitChange(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition bg-white"
-              >
-                {UNIT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onWorkUnitChange(value)}
+                className="w-full"
+                options={UNIT_OPTIONS.map((option) => ({
+                  label: option.label,
+                  value: option.value,
+                }))}
+              />
             </div>
           </div>
         </div>

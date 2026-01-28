@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Input, Select } from "antd";
 import ModelAddPayroll from "../../components/ui/Model/ModelAddPayroll";
 import ModelPayrollDetail from "../../components/ui/Model/ModelPayrollDetail";
 import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
@@ -35,7 +36,6 @@ const PayrollList = () => {
   const [filterMonth, setFilterMonth] = useState("all");
 
   const allPayrollRecords = getAllPayrolls(data);
-  console.log("All Payroll Records:", allPayrollRecords);
 
   const records = useMemo(() => {
     return allPayrollRecords.filter((record) => {
@@ -111,50 +111,51 @@ const PayrollList = () => {
 
         {/* ===== Tìm kiếm ===== */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <input
-            type="text"
+          <Input
             placeholder="🔍 Tìm kiếm nhân viên..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
           />
         </div>
 
         {/* ===== Bộ lọc ===== */}
         <div className="flex gap-4 flex-wrap">
-          <select
+          <Select
             value={filterPosition}
-            onChange={(e) => setFilterPosition(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
-          >
-            <option value="all">Tất cả vị trí</option>
-            <option value="Manager">Manager</option>
-            <option value="Leader">Leader</option>
-            <option value="Support">Support</option>
-            <option value="Employee">Employee</option>
-          </select>
-          <select
+            onChange={(value) => setFilterPosition(value)}
+            className="min-w-[180px]"
+            options={[
+              { value: "all", label: "Tất cả vị trí" },
+              { value: "Manager", label: "Manager" },
+              { value: "Leader", label: "Leader" },
+              { value: "Support", label: "Support" },
+              { value: "Employee", label: "Employee" },
+            ]}
+          />
+          <Select
             value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
-          >
-            <option value="all">Tất cả tháng</option>
-            <option value="12/2025">Tháng 12/2025</option>
-            <option value="11/2025">Tháng 11/2025</option>
-            <option value="10/2025">Tháng 10/2025</option>
-            <option value="09/2025">Tháng 09/2025</option>
-            <option value="08/2025">Tháng 08/2025</option>
-            <option value="07/2025">Tháng 07/2025</option>
-          </select>
-          <select
+            onChange={(value) => setFilterMonth(value)}
+            className="min-w-[200px]"
+            options={[
+              { value: "all", label: "Tất cả tháng" },
+              { value: "12/2025", label: "Tháng 12/2025" },
+              { value: "11/2025", label: "Tháng 11/2025" },
+              { value: "10/2025", label: "Tháng 10/2025" },
+              { value: "09/2025", label: "Tháng 09/2025" },
+              { value: "08/2025", label: "Tháng 08/2025" },
+              { value: "07/2025", label: "Tháng 07/2025" },
+            ]}
+          />
+          <Select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border-2 border-gray-200 rounded-lg px-4 py-2 bg-white hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="Đã thanh toán">Đã thanh toán</option>
-            <option value="Đang xử lý">Đang xử lý</option>
-          </select>
+            onChange={(value) => setFilterStatus(value)}
+            className="min-w-[200px]"
+            options={[
+              { value: "all", label: "Tất cả trạng thái" },
+              { value: "Đã thanh toán", label: "Đã thanh toán" },
+              { value: "Đang xử lý", label: "Đang xử lý" },
+            ]}
+          />
           <button
             onClick={handleShowAdd}
             className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 font-medium transition shadow-md"

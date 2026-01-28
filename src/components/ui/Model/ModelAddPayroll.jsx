@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Model from "../../common/Model";
+import { InputNumber, DatePicker, Input } from "antd";
+import dayjs from "dayjs";
 
 const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
   const [formData, setFormData] = useState({
@@ -10,11 +12,10 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
     deduction: "0",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
@@ -57,12 +58,12 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Mã nhân viên *
           </label>
-          <input
-            type="number"
-            name="employeeId"
-            value={formData.employeeId}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <InputNumber
+            className="w-full"
+            value={formData.employeeId ? Number(formData.employeeId) : null}
+            onChange={(value) =>
+              handleChange("employeeId", value !== null ? String(value) : "")
+            }
             placeholder="Nhập mã nhân viên"
             required
           />
@@ -72,13 +73,14 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Tháng *
           </label>
-          <input
-            type="month"
-            name="month"
-            value={formData.month}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
+          <DatePicker
+            picker="month"
+            className="w-full"
+            value={formData.month ? dayjs(formData.month, "MM/YYYY") : null}
+            onChange={(date) =>
+              handleChange("month", date ? date.format("MM/YYYY") : "")
+            }
+            placeholder="Chọn tháng"
           />
         </div>
 
@@ -87,12 +89,15 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Lương cơ bản (VND)
             </label>
-            <input
-              type="number"
-              name="baseSalary"
-              value={formData.baseSalary}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <InputNumber
+              className="w-full"
+              value={formData.baseSalary ? Number(formData.baseSalary) : null}
+              onChange={(value) =>
+                handleChange(
+                  "baseSalary",
+                  value !== null ? String(value) : ""
+                )
+              }
               placeholder="Nhập lương cơ bản (0 = tính từ giờ làm)"
             />
           </div>
@@ -100,12 +105,12 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Thưởng (VND)
             </label>
-            <input
-              type="number"
-              name="bonus"
-              value={formData.bonus}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <InputNumber
+              className="w-full"
+              value={formData.bonus ? Number(formData.bonus) : 0}
+              onChange={(value) =>
+                handleChange("bonus", value !== null ? String(value) : "0")
+              }
               placeholder="0"
             />
           </div>
@@ -115,12 +120,15 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Khấu trừ (VND)
           </label>
-          <input
-            type="number"
-            name="deduction"
-            value={formData.deduction}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <InputNumber
+            className="w-full"
+            value={formData.deduction ? Number(formData.deduction) : 0}
+            onChange={(value) =>
+              handleChange(
+                "deduction",
+                value !== null ? String(value) : "0"
+              )
+            }
             placeholder="0"
           />
         </div>

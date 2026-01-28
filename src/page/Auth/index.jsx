@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Input, Checkbox, Button } from "antd";
 import { setUser } from "../../redux/slices/userInfo";
 import initialData from "../../data/data";
 
@@ -66,49 +67,43 @@ const ClientLogin = () => {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="mb-6">
-                <div className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300 focus-within:outline-2 focus-within:outline-indigo-600">
-                  <input
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="mb-6">
+                  <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                    size="large"
                     required
                   />
                 </div>
-              </div>
 
-              <div className="mb-4">
-                <div className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300 focus-within:outline-2 focus-within:outline-indigo-600">
-                  <input
-                    type="password"
+                <div className="mb-4">
+                  <Input.Password
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Mật khẩu"
-                    className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                    size="large"
                     required
                   />
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2 mb-6 text-sm text-gray-600">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span>Nhớ mật khẩu</span>
-              </div>
+                <div className="flex items-center gap-2 mb-6 text-sm text-gray-600">
+                  <Checkbox />
+                  <span>Nhớ mật khẩu</span>
+                </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-md bg-gray-500 py-2 cursor-pointer text-white font-semibold hover:bg-gray-600 transition disabled:opacity-50"
-              >
-                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-              </button>
-            </form>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  loading={loading}
+                  className="w-full bg-gray-500 hover:bg-gray-600"
+                >
+                  {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+                </Button>
+              </form>
 
             <p className="text-center text-sm text-gray-600 mt-6">
               Demo: a@gmail.com / password
@@ -124,38 +119,34 @@ const ClientLogin = () => {
             </h2>
 
             <div className="mb-6">
-              <div className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300 focus-within:outline-2 focus-within:outline-indigo-600">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
-                />
-              </div>
+              <Input
+                type="email"
+                placeholder="Email"
+                size="large"
+              />
             </div>
 
             <div className="mb-4">
-              <div className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300 focus-within:outline-2 focus-within:outline-indigo-600">
-                <input
-                  type="password"
-                  placeholder="Mật khẩu"
-                  className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
-                />
-              </div>
+              <Input.Password
+                placeholder="Mật khẩu"
+                size="large"
+              />
             </div>
 
             <div className="mb-4">
-              <div className="flex items-center rounded-md bg-white pl-3 outline-1 outline-gray-300 focus-within:outline-2 focus-within:outline-indigo-600">
-                <input
-                  type="password"
-                  placeholder="Nhập lại mật khẩu"
-                  className="w-full py-2 px-1 text-xl text-gray-900 placeholder:text-gray-400 focus:outline-none"
-                />
-              </div>
+              <Input.Password
+                placeholder="Nhập lại mật khẩu"
+                size="large"
+              />
             </div>
 
-            <button className="w-full rounded-md bg-gray-500 py-2 cursor-pointer text-white font-semibold hover:bg-gray-600 transition">
+            <Button
+              type="primary"
+              size="large"
+              className="w-full bg-gray-500 hover:bg-gray-600"
+            >
               Đăng ký
-            </button>
+            </Button>
           </div>
         )}
 

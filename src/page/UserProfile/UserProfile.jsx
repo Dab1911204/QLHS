@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Input, Select, Button } from "antd";
 import { updateUserInfo, updateUserPassword, userInfoSelector } from "../../redux/slices/userInfo";
 
 const UserProfile = () => {
@@ -27,19 +28,17 @@ const UserProfile = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleInfoChange = (e) => {
-    const { name, value } = e.target;
+  const handleInfoChange = (field, value) => {
     setInfoForm((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
+  const handlePasswordChange = (field, value) => {
     setPasswordForm((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
@@ -181,12 +180,9 @@ const UserProfile = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Họ tên
                     </label>
-                    <input
-                      type="text"
-                      name="name"
+                    <Input
                       value={infoForm.name}
-                      onChange={handleInfoChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) => handleInfoChange("name", e.target.value)}
                     />
                   </div>
 
@@ -195,12 +191,10 @@ const UserProfile = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Email
                     </label>
-                    <input
+                    <Input
                       type="email"
-                      name="email"
                       value={infoForm.email}
-                      onChange={handleInfoChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) => handleInfoChange("email", e.target.value)}
                     />
                   </div>
 
@@ -209,12 +203,10 @@ const UserProfile = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Điện thoại
                     </label>
-                    <input
+                    <Input
                       type="tel"
-                      name="phone"
                       value={infoForm.phone}
-                      onChange={handleInfoChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) => handleInfoChange("phone", e.target.value)}
                     />
                   </div>
 
@@ -224,24 +216,25 @@ const UserProfile = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Trạng thái
                     </label>
-                    <select
-                      name="status"
+                    <Select
                       value={infoForm.status}
-                      onChange={handleInfoChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    >
-                      <option value="Đang tham gia">Đang tham gia</option>
-                      <option value="Đã rút">Đã rút</option>
-                    </select>
+                      onChange={(value) => handleInfoChange("status", value)}
+                      className="w-full"
+                      options={[
+                        { value: "Đang tham gia", label: "Đang tham gia" },
+                        { value: "Đã rút", label: "Đã rút" },
+                      ]}
+                    />
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full bg-blue-500 hover:bg-blue-600"
                 >
                   ✓ Cập nhật thông tin
-                </button>
+                </Button>
               </form>
             )}
 
@@ -253,14 +246,13 @@ const UserProfile = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Mật khẩu cũ *
                   </label>
-                  <input
-                    type="password"
-                    name="oldPassword"
+                  <Input.Password
                     value={passwordForm.oldPassword}
-                    onChange={handlePasswordChange}
+                    onChange={(e) =>
+                      handlePasswordChange("oldPassword", e.target.value)
+                    }
                     placeholder="Nhập mật khẩu cũ"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -269,14 +261,13 @@ const UserProfile = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Mật khẩu mới *
                   </label>
-                  <input
-                    type="password"
-                    name="newPassword"
+                  <Input.Password
                     value={passwordForm.newPassword}
-                    onChange={handlePasswordChange}
+                    onChange={(e) =>
+                      handlePasswordChange("newPassword", e.target.value)
+                    }
                     placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -285,23 +276,23 @@ const UserProfile = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Xác nhận mật khẩu *
                   </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
+                  <Input.Password
                     value={passwordForm.confirmPassword}
-                    onChange={handlePasswordChange}
+                    onChange={(e) =>
+                      handlePasswordChange("confirmPassword", e.target.value)
+                    }
                     placeholder="Xác nhận mật khẩu mới"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full bg-blue-500 hover:bg-blue-600"
                 >
                   🔐 Cập nhật mật khẩu
-                </button>
+                </Button>
 
                 <p className="text-sm text-gray-600 mt-4">
                   💡 <strong>Lưu ý:</strong> Mật khẩu phải có ít nhất 6 ký tự

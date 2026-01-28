@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Input, Select } from "antd";
 import AttendanceDetailModal from "../../components/ui/Model/AttendanceDetailModal";
 import CheckInModal from "../../components/ui/Model/CheckInModal";
 import Header from "../../components/Tables/Header";
@@ -25,18 +26,20 @@ const hearerLabels = [
 const AttendanceList = () => {
   const { data, addAttendance } = useData();
   const [search, setSearch] = useState("");
-  const [filterMonth, setFilterMonth] = useState(12); // Mặc định tháng 12 (dữ liệu hiện tại)
-  const [filterYear, setFilterYear] = useState(2025); // Mặc định năm 2025
+  // Mặc định là tháng/năm hiện tại để hiển thị luôn chấm công mới
+  const now = new Date();
+  const [filterMonth, setFilterMonth] = useState(now.getMonth() + 1);
+  const [filterYear, setFilterYear] = useState(now.getFullYear());
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
   const currentUser = useSelector(userInfoSelector)
+  // Giờ vào/ra để người dùng tự chọn trong modal
   const [checkInTime, setCheckInTime] = useState("");
   const [checkOutTime, setCheckOutTime] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
   const [workUnit, setWorkUnit] = useState("module");
-
   const employees = data.employees;
 
   const filteredEmployees = useMemo(() => {
@@ -71,9 +74,10 @@ const AttendanceList = () => {
   };
 
   const handleOpenCheckIn = () => {
-    setShowCheckInModal(true);
+    // Mỗi lần mở modal sẽ reset form, để user tự chọn giờ vào/ra
     setCheckInTime("");
     setCheckOutTime("");
+    setShowCheckInModal(true);
     setWorkDescription("");
     setProductQuantity("");
     setWorkUnit("module");
@@ -85,27 +89,35 @@ const AttendanceList = () => {
       return;
     }
 
-    // Tính giờ làm từ checkIn và checkOut
+    // Tính giờ làm từ checkIn và checkOut, trừ thời gian nghỉ trưa 12h-13h
     let workHours = 0;
     let status = "present";
 
+    const [inHour, inMin] = checkInTime.split(":").map(Number);
+    const checkInDecimal = inHour + inMin / 60;
+
+    let checkOutDecimal;
     if (checkOutTime) {
-      const [inHour, inMin] = checkInTime.split(":").map(Number);
       const [outHour, outMin] = checkOutTime.split(":").map(Number);
-      workHours = (outHour + outMin / 60) - (inHour + inMin / 60);
-      
-      // Kiểm tra đi muộn (sau 8:30)
-      if (inHour > 8 || (inHour === 8 && inMin > 30)) {
-        status = "late";
-      }
+      checkOutDecimal = outHour + outMin / 60;
     } else {
-      // Nếu chưa checkout, tính tạm từ check in đến bây giờ
       const now = new Date();
-      const [inHour, inMin] = checkInTime.split(":").map(Number);
-      workHours = (now.getHours() + now.getMinutes() / 60) - (inHour + inMin / 60);
-      if (inHour > 8 || (inHour === 8 && inMin > 30)) {
-        status = "late";
-      }
+      checkOutDecimal = now.getHours() + now.getMinutes() / 60;
+    }
+
+    if (checkOutDecimal > checkInDecimal) {
+      const rawHours = checkOutDecimal - checkInDecimal;
+      const breakStart = 12;
+      const breakEnd = 13;
+      const overlap =
+        Math.max(0, Math.min(checkOutDecimal, breakEnd) - Math.max(checkInDecimal, breakStart));
+      workHours = rawHours - overlap;
+    } else {
+      workHours = 0;
+    }
+
+    if (inHour > 8) {
+      status = "late";
     }
 
     const today = new Date().toISOString().split("T")[0];
@@ -141,48 +153,40 @@ const AttendanceList = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Tìm kiếm nhân sự
                 </label>
-                <input
-                  type="text"
+                <Input
                   placeholder="Nhập tên..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Tháng
                 </label>
-                <select
+                <Select
                   value={filterMonth}
-                  onChange={(e) => setFilterMonth(parseInt(e.target.value))}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                >
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      Tháng {i + 1}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setFilterMonth(value)}
+                  className="w-full"
+                  options={Array.from({ length: 12 }, (_, i) => ({
+                    label: `Tháng ${i + 1}`,
+                    value: i + 1,
+                  }))}
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Năm
                 </label>
-                <select
+                <Select
                   value={filterYear}
-                  onChange={(e) => setFilterYear(parseInt(e.target.value))}
-                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                >
-                  {Array.from({ length: 5 }, (_, i) => {
+                  onChange={(value) => setFilterYear(value)}
+                  className="w-full"
+                  options={Array.from({ length: 5 }, (_, i) => {
                     const year = new Date().getFullYear() - 2 + i;
-                    return (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    );
+                    return { label: year, value: year };
                   })}
-                </select>
+                />
               </div>
             </div>
           </div>
