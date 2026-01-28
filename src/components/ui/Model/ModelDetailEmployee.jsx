@@ -3,7 +3,7 @@ import Modal from "../../common/Model";
 import Tab from "../Tag";
 
 const ModelDetailEmployee = ({ data, isOpen, onClose }) => {
-  const [tab, setTab] = useState("task");
+  const [tab, setTab] = useState("info");
   if (!isOpen || !data) return null;
   return (
     <Modal
@@ -54,56 +54,53 @@ const ModelDetailEmployee = ({ data, isOpen, onClose }) => {
           <div className="col-span-2 p-8">
             <div className="flex gap-6 border-b border-gray-200 mb-6">
               <Tab
-                label="Task"
-                active={tab === "task"}
-                onClick={() => setTab("task")}
+                label="Thông tin"
+                active={tab === "info"}
+                onClick={() => setTab("info")}
               />
               <Tab
-                label="Effort"
-                active={tab === "effort"}
-                onClick={() => setTab("effort")}
-              />
-              <Tab
-                label="Chấm công"
-                active={tab === "attendance"}
-                onClick={() => setTab("attendance")}
-              />
-              <Tab
-                label="Đánh giá"
-                active={tab === "review"}
-                onClick={() => setTab("review")}
+                label="Tài khoản ngân hàng"
+                active={tab === "bank"}
+                onClick={() => setTab("bank")}
               />
             </div>
 
             <div className="mt-6">
-              {tab === "task" && (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 text-gray-600 min-h-64">
-                  <h4 className="font-semibold text-gray-900 mb-4">
-                    Danh sách task đang làm
-                  </h4>
-                  <p className="text-sm">Không có task nào</p>
+              {tab === "info" && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 text-gray-600 min-h-64 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-lg p-4">
+                      <p className="text-xs text-gray-500 mb-1">Nơi ở</p>
+                      <p className="font-semibold text-gray-900">{data.address || "Chưa cập nhật"}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4">
+                      <p className="text-xs text-gray-500 mb-1">Số căn cước</p>
+                      <p className="font-semibold text-gray-900">{data.idCard || "Chưa cập nhật"}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Email</p>
+                    <p className="font-semibold text-gray-900">{data.email}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Điện thoại</p>
+                    <p className="font-semibold text-gray-900">{data.phone}</p>
+                  </div>
                 </div>
               )}
-              {tab === "effort" && (
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 text-gray-600 min-h-64">
-                  <h4 className="font-semibold text-gray-900 mb-4">
-                    Số giờ làm theo ngày / task
-                  </h4>
-                  <p className="text-sm">Chưa có dữ liệu</p>
-                </div>
-              )}
-              {tab === "attendance" && (
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-6 text-gray-600 min-h-64">
-                  <h4 className="font-semibold text-gray-900 mb-4">
-                    Bảng chấm công
-                  </h4>
-                  <p className="text-sm">(ngày, giờ vào, giờ ra)</p>
-                </div>
-              )}
-              {tab === "review" && (
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 text-gray-600 min-h-64">
-                  <h4 className="font-semibold text-gray-900 mb-4">Đánh giá</h4>
-                  <p className="text-sm">Điểm hiệu suất & nhận xét PM</p>
+              {tab === "bank" && (
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 text-gray-600 min-h-64 space-y-4">
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Tên ngân hàng</p>
+                    <p className="font-semibold text-gray-900">{data.bankName || "Chưa cập nhật"}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Số tài khoản</p>
+                    <p className="font-semibold text-gray-900">{data.bankAccount || "Chưa cập nhật"}</p>
+                  </div>
+                  <div className="bg-blue-100 border border-blue-300 rounded-lg p-4">
+                    <p className="text-sm text-blue-700">💡 Cập nhật thông tin tài khoản ngân hàng tại quản lý hồ sơ cá nhân</p>
+                  </div>
                 </div>
               )}
             </div>

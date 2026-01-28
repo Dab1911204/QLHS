@@ -1,7 +1,6 @@
 import { FaRegEye } from "react-icons/fa";
 import { VscTools } from "react-icons/vsc";
 
-
 const formatCurrency = (value) => {
   if (value === null || value === undefined || isNaN(value)) return "0 ₫";
   return new Intl.NumberFormat("vi-VN", {
@@ -11,7 +10,7 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 
-const PayrollBody = ({ items, onViewDetail, onUpdatePayroll }) => {
+const PayrollBody = ({ items, onViewDetail, onUpdatePayroll, userInfo }) => {
   return (
     <tbody>
       {items.map((payroll, idx) => {
@@ -73,15 +72,17 @@ const PayrollBody = ({ items, onViewDetail, onUpdatePayroll }) => {
                     <span>Xem</span>
                   </div>
                 </button>
-                <button
-                  onClick={() => onUpdatePayroll(payroll)}
-                  className="bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-1 rounded-lg text-sm font-medium transition"
-                >
-                  <div className="flex flex-row items-center gap-1">
-                    <VscTools />
-                    <span>Sửa</span>
-                  </div>
-                </button>
+                {userInfo.role !== "Employee" && (
+                  <button
+                    onClick={() => onUpdatePayroll(payroll)}
+                    className="bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-1 rounded-lg text-sm font-medium transition"
+                  >
+                    <div className="flex flex-row items-center gap-1">
+                      <VscTools />
+                      <span>Sửa</span>
+                    </div>
+                  </button>
+                )}
               </div>
             </td>
           </tr>

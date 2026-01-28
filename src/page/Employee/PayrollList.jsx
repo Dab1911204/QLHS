@@ -6,10 +6,9 @@ import ModelUpdatePayroll from "../../components/ui/Model/ModelUpdatePayroll";
 import PayrollBody from "../../components/Tables/Body/PayrollBody";
 import Header from "../../components/Tables/Header";
 import { useData } from "../../contexts/Data/DataContext";
-import {
-  getAllPayrolls,
-  calculateMonthlyPayroll,
-} from "../../data/data";
+import { getAllPayrolls, calculateMonthlyPayroll } from "../../data/data";
+import { useSelector } from "react-redux";
+import { userInfoSelector } from "../../redux/slices/userInfo";
 
 const hearderTitles = [
   "Mã NV",
@@ -27,6 +26,7 @@ const hearderTitles = [
 const PayrollList = () => {
   const { data, addPayroll, updatePayroll } = useData();
   const [search, setSearch] = useState("");
+  const userInfo = useSelector(userInfoSelector);
   const [filterPosition, setFilterPosition] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
@@ -53,14 +53,21 @@ const PayrollList = () => {
       // Parse month from "MM/YYYY" format
       const recordMonth = parseInt(record.month.split("/")[0]);
       const recordYear = parseInt(record.month.split("/")[1]);
-      const matchMonth =
-        filterMonth === "all" || recordMonth === filterMonth;
-      const matchYear =
-        filterYear === "all" || recordYear === filterYear;
+      const matchMonth = filterMonth === "all" || recordMonth === filterMonth;
+      const matchYear = filterYear === "all" || recordYear === filterYear;
 
-      return matchSearch && matchPosition && matchStatus && matchMonth && matchYear;
+      return (
+        matchSearch && matchPosition && matchStatus && matchMonth && matchYear
+      );
     });
-  }, [search, filterPosition, filterStatus, filterMonth, filterYear, allPayrollRecords]);
+  }, [
+    search,
+    filterPosition,
+    filterStatus,
+    filterMonth,
+    filterYear,
+    allPayrollRecords,
+  ]);
 
   const handleShowAdd = () => {
     setSelectedPayroll(null);
@@ -82,26 +89,27 @@ const PayrollList = () => {
     const { month: monthStr, employeeId } = newPayroll;
     const monthValue = parseInt(monthStr.split("/")[0]);
     const yearValue = parseInt(monthStr.split("/")[1]);
-    
+
     const calculatedPayroll = calculateMonthlyPayroll(
-      data, 
-      employeeId, 
-      monthValue, 
-      yearValue, 
-      0, 
-      0
+      data,
+      employeeId,
+      monthValue,
+      yearValue,
+      0,
+      0,
     );
 
     if (calculatedPayroll) {
       // Kiểm tra xem bảng lương đã tồn tại chưa
       const existingPayroll = data.payrolls.find(
-        (p) => p.employeeId === employeeId && p.month === calculatedPayroll.month
+        (p) =>
+          p.employeeId === employeeId && p.month === calculatedPayroll.month,
       );
 
       if (existingPayroll) {
-         updatePayroll(existingPayroll.id, calculatedPayroll);
+        updatePayroll(existingPayroll.id, calculatedPayroll);
       } else {
-         addPayroll(calculatedPayroll);
+        addPayroll(calculatedPayroll);
       }
     }
     setShowModalAdd(false);
@@ -115,7 +123,6 @@ const PayrollList = () => {
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto space-y-6">
-
         {/* ===== Tìm kiếm ===== */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
           <Input
@@ -173,12 +180,14 @@ const PayrollList = () => {
               { value: "Đang xử lý", label: "Đang xử lý" },
             ]}
           />
-          <button
-            onClick={handleShowAdd}
-            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 font-medium transition shadow-md"
-          >
-            + Thêm bảng lương
-          </button>
+          {userInfo.role !== "Employee" && (
+            <button
+              onClick={handleShowAdd}
+              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 font-medium transition shadow-md"
+            >
+              + Thêm bảng lương
+            </button>
+          )}
         </div>
 
         {/* ===== Bảng lương ===== */}
@@ -190,6 +199,7 @@ const PayrollList = () => {
               items={records}
               onViewDetail={handleShowDetail}
               onUpdatePayroll={handleShowUpdate}
+              userInfo={userInfo}
             />
           </table>
         </div>

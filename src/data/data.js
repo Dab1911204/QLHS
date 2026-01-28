@@ -16,6 +16,10 @@ const initialData = {
       startDate: "01/01/2025",
       status: "Đang tham gia",
       avatar: null,
+      address: "",
+      idCard: "",
+      bankAccount: "",
+      bankName: "",
     },
     {
       id: 2,
@@ -27,6 +31,10 @@ const initialData = {
       startDate: "01/02/2025",
       status: "Đang tham gia",
       avatar: null,
+      address: "",
+      idCard: "",
+      bankAccount: "",
+      bankName: "",
     },
     {
       id: 3,
@@ -38,6 +46,10 @@ const initialData = {
       startDate: "01/03/2025",
       status: "Đang tham gia",
       avatar: null,
+      address: "",
+      idCard: "",
+      bankAccount: "",
+      bankName: "",
     },
     {
       id: 4,
@@ -49,6 +61,10 @@ const initialData = {
       startDate: "01/04/2025",
       status: "Đang tham gia",
       avatar: null,
+      address: "",
+      idCard: "",
+      bankAccount: "",
+      bankName: "",
     },
     {
       id: 5,
@@ -60,6 +76,10 @@ const initialData = {
       startDate: "01/05/2025",
       status: "Đang tham gia",
       avatar: null,
+      address: "",
+      idCard: "",
+      bankAccount: "",
+      bankName: "",
     },
   ],
 
@@ -480,13 +500,15 @@ export const addEmployee = (data, newEmployee) => {
     name: newEmployee.name,
     email: newEmployee.email,
     phone: newEmployee.phone,
-    position: newEmployee.position,
+    password: newEmployee.password,
     role: newEmployee.role,
     startDate: newEmployee.startDate,
     status: newEmployee.status || "Đang tham gia",
-    contribution: newEmployee.contribution || "100%",
-    department: newEmployee.department,
     avatar: newEmployee.avatar || null,
+    address: newEmployee.address || "",
+    idCard: newEmployee.idCard || "",
+    bankAccount: newEmployee.bankAccount || "",
+    bankName: newEmployee.bankName || "",
   };
 
   return {

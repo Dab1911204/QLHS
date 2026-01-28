@@ -3,6 +3,8 @@ import { MdKeyboardArrowDown, MdOutlineCategory } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
 import { useMemo, useState } from "react";
 import { useSidebar } from "../contexts/Sidebar/SidebarContext";
+import { useSelector } from "react-redux";
+import { userInfoSelector } from "../redux/slices/userInfo";
 
 const initialMenuItems = [
   { name: "Trang chủ", path: "/", icon: <IoHomeOutline size={15} /> },
@@ -20,8 +22,8 @@ const initialMenuItems = [
 export default function Sidebar() {
   const { isOpen } = useSidebar();
   const location = useLocation();
+  const userInfo = useSelector(userInfoSelector);
   const currentPath = location.pathname;
-
   // Lưu lại danh mục cha được click (chỉ một cha khi không có child active theo URL)
   // Cho phép mở nhiều danh mục cha
   const [openMenus, setOpenMenus] = useState(() => {
@@ -39,6 +41,20 @@ export default function Sidebar() {
       ),
     [currentPath],
   );
+
+  // Lọc menu dựa trên role: nếu là Employee thì ẩn item /employees
+  const menuItems = initialMenuItems.map((item) => {
+    if (!item.children) return item;
+
+    const children = item.children.filter((child) => {
+      if (child.path === "/employees" && userInfo?.role === "Employee") {
+        return false;
+      }
+      return true;
+    });
+
+    return { ...item, children };
+  });
 
   const handleClick = (item) => {
     if (!item.children) return;
@@ -70,7 +86,7 @@ export default function Sidebar() {
           </h2>
 
           <ul className="text-[14px] font-semibold">
-            {initialMenuItems.map((item) => {
+            {menuItems.map((item) => {
               const hasChildren = !!item.children?.length;
               const hasActiveChild = hasChildren
                 ? item.children.some((c) => c.path === currentPath)

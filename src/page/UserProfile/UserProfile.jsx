@@ -1,21 +1,33 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Input, Select, Button } from "antd";
-import { updateUserInfo, updateUserPassword, userInfoSelector } from "../../redux/slices/userInfo";
+import { useData } from "../../contexts/Data/DataContext";
+import { useSelector } from "react-redux";
+import { userInfoSelector } from "../../redux/slices/userInfo";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("info");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(userInfoSelector);
+  const { data, updateEmployee } = useData();
+
+  // Get current user data from DataContext
+  const currentEmployee = data.employees.find((emp) => emp.id === userInfo.id);
 
   // Tab 1: Sửa thông tin cá nhân
   const [infoForm, setInfoForm] = useState({
-    name: userInfo.name,
-    email: userInfo.email,
-    phone: userInfo.phone,
-    status: userInfo.status,
+    name: currentEmployee?.name || userInfo.name || "",
+    email: currentEmployee?.email || userInfo.email || "",
+    phone: currentEmployee?.phone || userInfo.phone || "",
+    status: currentEmployee?.status || userInfo.status || "Đang tham gia",
+    address: currentEmployee?.address || "",
+    idCard: currentEmployee?.idCard || "",
+  });
+
+  // Tab 3: Quản lý tài khoản ngân hàng
+  const [bankForm, setBankForm] = useState({
+    bankName: currentEmployee?.bankName || "",
+    bankAccount: currentEmployee?.bankAccount || "",
   });
 
   // Tab 2: Đổi mật khẩu
@@ -35,6 +47,13 @@ const UserProfile = () => {
     }));
   };
 
+  const handleBankChange = (field, value) => {
+    setBankForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handlePasswordChange = (field, value) => {
     setPasswordForm((prev) => ({
       ...prev,
@@ -47,8 +66,33 @@ const UserProfile = () => {
     setError("");
     setMessage("");
 
-    dispatch(updateUserInfo(infoForm));
+    if (!currentEmployee) {
+      setError("Không tìm thấy thông tin nhân viên!");
+      return;
+    }
+
+    updateEmployee(currentEmployee.id, infoForm);
     setMessage("✅ Cập nhật thông tin cá nhân thành công!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleUpdateBank = (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!bankForm.bankName || !bankForm.bankAccount) {
+      setError("Vui lòng điền đầy đủ thông tin tài khoản ngân hàng!");
+      return;
+    }
+
+    if (!currentEmployee) {
+      setError("Không tìm thấy thông tin nhân viên!");
+      return;
+    }
+
+    updateEmployee(currentEmployee.id, bankForm);
+    setMessage("✅ Cập nhật thông tin tài khoản ngân hàng thành công!");
     setTimeout(() => setMessage(""), 3000);
   };
 
@@ -58,7 +102,7 @@ const UserProfile = () => {
     setMessage("");
 
     // Validate old password
-    if (passwordForm.oldPassword !== userInfo.password) {
+    if (passwordForm.oldPassword !== currentEmployee?.password) {
       setError("Mật khẩu cũ không chính xác!");
       return;
     }
@@ -76,7 +120,12 @@ const UserProfile = () => {
     }
 
     // Update password
-    dispatch(updateUserPassword(passwordForm.newPassword));
+    if (!currentEmployee) {
+      setError("Không tìm thấy thông tin nhân viên!");
+      return;
+    }
+
+    updateEmployee(currentEmployee.id, { password: passwordForm.newPassword });
     setMessage("✅ Cập nhật mật khẩu thành công!");
     setPasswordForm({
       oldPassword: "",
@@ -109,24 +158,24 @@ const UserProfile = () => {
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-blue-400 flex items-center justify-center text-white font-bold text-3xl">
-              {userInfo.avatar ? (
+              {currentEmployee?.avatar ? (
                 <img
-                  src={userInfo.avatar}
-                  alt={userInfo.name}
+                  src={currentEmployee.avatar}
+                  alt={currentEmployee.name}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
-                userInfo.name
-                  .split(" ")
+                currentEmployee?.name
+                  ?.split(" ")
                   .map((word) => word[0])
                   .join("")
                   .toUpperCase()
               )}
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{userInfo.name}</h1>
-              <p className="text-gray-600 text-lg">{userInfo.position || userInfo.role}</p>
-              <p className="text-gray-500">{userInfo.email}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{currentEmployee?.name}</h1>
+              <p className="text-gray-600 text-lg">{currentEmployee?.role}</p>
+              <p className="text-gray-500">{currentEmployee?.email}</p>
             </div>
           </div>
         </div>
@@ -144,6 +193,16 @@ const UserProfile = () => {
               }`}
             >
               <span>Thông tin cá nhân</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("bank")}
+              className={`flex-1 py-4 px-6 font-semibold transition ${
+                activeTab === "bank"
+                  ? "bg-blue-50 text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              <span>Quản lý tài khoản</span>
             </button>
             <button
               onClick={() => setActiveTab("password")}
@@ -210,7 +269,6 @@ const UserProfile = () => {
                     />
                   </div>
 
-
                   {/* Trạng thái */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -228,6 +286,30 @@ const UserProfile = () => {
                   </div>
                 </div>
 
+                {/* Nơi ở */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nơi ở
+                  </label>
+                  <Input
+                    value={infoForm.address}
+                    onChange={(e) => handleInfoChange("address", e.target.value)}
+                    placeholder="Nhập địa chỉ"
+                  />
+                </div>
+
+                {/* Số căn cước */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Số căn cước
+                  </label>
+                  <Input
+                    value={infoForm.idCard}
+                    onChange={(e) => handleInfoChange("idCard", e.target.value)}
+                    placeholder="Nhập số căn cước"
+                  />
+                </div>
+
                 <Button
                   type="primary"
                   htmlType="submit"
@@ -238,7 +320,52 @@ const UserProfile = () => {
               </form>
             )}
 
-            {/* Tab 2: Đổi mật khẩu */}
+            {/* Tab 2: Quản lý tài khoản */}
+            {activeTab === "bank" && (
+              <form onSubmit={handleUpdateBank} className="space-y-6 max-w-2xl">
+                {/* Tên ngân hàng */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Tên ngân hàng *
+                  </label>
+                  <Input
+                    value={bankForm.bankName}
+                    onChange={(e) => handleBankChange("bankName", e.target.value)}
+                    placeholder="VD: Ngân hàng Vietcombank, Techcombank, ..."
+                    required
+                  />
+                </div>
+
+                {/* Số tài khoản */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Số tài khoản *
+                  </label>
+                  <Input
+                    value={bankForm.bankAccount}
+                    onChange={(e) => handleBankChange("bankAccount", e.target.value)}
+                    placeholder="Nhập số tài khoản ngân hàng"
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full bg-green-500 hover:bg-green-600"
+                >
+                  💳 Cập nhật thông tin tài khoản
+                </Button>
+
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-green-700">
+                    💡 <strong>Lưu ý:</strong> Thông tin tài khoản ngân hàng sẽ được sử dụng để chuyển lương tháng
+                  </p>
+                </div>
+              </form>
+            )}
+
+            {/* Tab 3: Đổi mật khẩu */}
             {activeTab === "password" && (
               <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-md">
                 {/* Mật khẩu cũ */}

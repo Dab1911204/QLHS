@@ -221,9 +221,6 @@ const HomePage = () => {
                     Vai Trò
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">
-                    % Tham Gia
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
                     Trạng Thái
                   </th>
                 </tr>
@@ -233,11 +230,6 @@ const HomePage = () => {
                   <tr key={emp.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-gray-800">{emp.name}</td>
                     <td className="py-3 px-4 text-gray-600">{emp.role}</td>
-                    <td className="py-3 px-4">
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                        {emp.contribution}
-                      </span>
-                    </td>
                     <td className="py-3 px-4">
                       <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
                         {emp.status}
