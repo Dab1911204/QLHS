@@ -407,6 +407,7 @@ export const getAllPayrolls = (data) => {
     if (["Manager", "Leader", "Support"].includes(employee.role)) {
       totalHours = getTotalHoursByEmployeeAndMonth(data, employee.id, month, year);
     } else if (employee.role === "Employee") {
+      totalHours = getTotalHoursByEmployeeAndMonth(data, employee.id, month, year);
       totalProducts = getTotalProductsByEmployeeAndMonth(data, employee.id, month, year);
     }
 
@@ -415,7 +416,7 @@ export const getAllPayrolls = (data) => {
     if (["Manager", "Leader", "Support"].includes(employee.role)) {
       baseSalary = calculateSalaryByHours(totalHours);
     } else if (employee.role === "Employee") {
-      baseSalary = calculateSalaryByProducts(totalProducts);
+      baseSalary = calculateSalaryByProducts(totalHours, totalProducts);
     }
 
     // Tính netSalary = baseSalary + bonus - deduction
@@ -724,24 +725,72 @@ export const getTotalProductsByEmployeeAndMonth = (data, employeeId, month, year
 
 /**
  * Tính lương theo giờ làm (cho Manager, Leader, Support)
- * Mỗi giờ = 40,000 đồng
+ * - Đủ 8 tiếng: baseSalary
+ * - Vượt quá 8 tiếng: baseSalary + (hourlyRate × giờ_vượt × 1.4)
  */
 export const calculateSalaryByHours = (totalHours, hourlyRate = 40000) => {
-  return Math.floor(totalHours * hourlyRate);
+  if (totalHours <= 8) {
+    return Math.floor(totalHours * hourlyRate);
+  }
+  
+  // Tính lương 8 tiếng cơ bản + phần vượt với hệ số 1.4
+  const baseHours = 8;
+  const overtimeHours = totalHours - baseHours;
+  const baseSalary = Math.floor(baseHours * hourlyRate);
+  const overtimeSalary = Math.floor(overtimeHours * hourlyRate * 1.4);
+  
+  return baseSalary + overtimeSalary;
 };
 
 /**
- * Tính lương theo sản phẩm (cho Employee)
- * Mỗi phiếu = 180 đồng
+ * Tính lương theo sản phẩm/KPI (cho Employee)
+ * Công thức: Lương = (180k / 650) × KPI_8h + (180k / 650) × KPI_OT × 1.4
+ * KPI mặc định tổng = 650
+ * 
+ * Ví dụ:
+ * - KPI 8 tiếng = 500
+ * - KPI OT = 150
+ * - Tổng KPI = 650
+ * - Lương = (180k/650) × 500 + (180k/650) × 150 × 1.4
  */
-export const calculateSalaryByProducts = (totalProducts, productRate = 180) => {
-  return Math.floor(totalProducts * productRate);
+export const calculateSalaryByProducts = (totalHours, totalProducts) => {
+  const dailyRate = 180000; // 180k một ngày
+  const standardHours = 8;
+  const defaultKPI = 650; // KPI mặc định tổng
+  
+  // Nếu không có sản phẩm
+  if (totalProducts === 0 || !totalProducts) return 0;
+  
+  // Chia KPI theo tỉ lệ giờ làm (8h vs OT)
+  let kpiIn8Hours = 0;
+  let kpiInOT = 0;
+  
+  if (totalHours <= standardHours) {
+    // Không có OT, tất cả KPI là trong 8 tiếng
+    kpiIn8Hours = totalProducts;
+    kpiInOT = 0;
+  } else {
+    // Có OT, chia KPI tỉ lệ với giờ làm
+    const otHours = totalHours - standardHours;
+    const ratio8h = standardHours / totalHours;
+    const ratioOT = otHours / totalHours;
+    
+    kpiIn8Hours = Math.floor(totalProducts * ratio8h);
+    kpiInOT = totalProducts - kpiIn8Hours;
+  }
+  
+  // Tính lương = (180k / 650) × kpi_8h + (180k / 650) × kpi_OT × 1.4
+  const ratePerKPI = dailyRate / defaultKPI;
+  const salary8h = Math.floor(ratePerKPI * kpiIn8Hours);
+  const salaryOT = Math.floor(ratePerKPI * kpiInOT * 1.4);
+  
+  return salary8h + salaryOT;
 };
 
 /**
  * Tính lương tháng dựa trên chức vụ
  * - Manager, Leader, Support: Tính theo giờ (40,000/giờ)
- * - Employee: Tính theo sản phẩm (180/phiếu)
+ * - Employee: Tính theo KPI và hệ số OT (180k/ngày)
  */
 export const calculateMonthlyPayroll = (data, employeeId, month, year, bonus = 0, deduction = 0) => {
   const employee = getEmployeeById(data, employeeId);
@@ -758,9 +807,10 @@ export const calculateMonthlyPayroll = (data, employeeId, month, year, bonus = 0
     totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
     baseSalary = calculateSalaryByHours(totalHours);
   } else if (employee.role === "Employee") {
-    // Tính lương theo sản phẩm
+    // Tính lương theo sản phẩm/KPI
+    totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
     totalProducts = getTotalProductsByEmployeeAndMonth(data, employeeId, month, year);
-    baseSalary = calculateSalaryByProducts(totalProducts);
+    baseSalary = calculateSalaryByProducts(totalHours, totalProducts);
   }
 
   const netSalary = baseSalary + bonus - deduction;

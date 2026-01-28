@@ -116,47 +116,52 @@ const CheckInModal = ({
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              📝 Mô tả công việc
-            </label>
-            <Input.TextArea
-              value={workDescription}
-              onChange={(e) => onWorkDescriptionChange(e.target.value)}
-              placeholder="Mô tả chi tiết công việc đã làm trong hôm nay..."
-              rows={3}
-            />
-          </div>
+          {/* Chỉ hiện cho Employee */}
+          {currentUser.role === "Employee" && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  📝 Mô tả công việc
+                </label>
+                <Input.TextArea
+                  value={workDescription}
+                  onChange={(e) => onWorkDescriptionChange(e.target.value)}
+                  placeholder="Mô tả chi tiết công việc đã làm trong hôm nay..."
+                  rows={3}
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📊 Số lượng hoàn thành
-              </label>
-              <InputNumber
-                value={productQuantity}
-                onChange={(value) => onProductQuantityChange(value ?? "")}
-                placeholder="Nhập số lượng..."
-                min={0}
-                className="w-full"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    📊 Số lượng hoàn thành
+                  </label>
+                  <InputNumber
+                    value={productQuantity}
+                    onChange={(value) => onProductQuantityChange(value ?? "")}
+                    placeholder="Nhập số lượng..."
+                    min={0}
+                    style={{ width: "100%" }}
+                  />
+                </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📦 Công việc
-              </label>
-              <Select
-                value={workUnit}
-                onChange={(value) => onWorkUnitChange(value)}
-                className="w-full"
-                options={UNIT_OPTIONS.map((option) => ({
-                  label: option.label,
-                  value: option.value,
-                }))}
-              />
-            </div>
-          </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    📦 Công việc
+                  </label>
+                  <Select
+                    value={workUnit}
+                    onChange={(value) => onWorkUnitChange(value)}
+                    className="w-full"
+                    options={UNIT_OPTIONS.map((option) => ({
+                      label: option.label,
+                      value: option.value,
+                    }))}
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Buttons */}

@@ -106,34 +106,39 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
       title="Cập nhật bảng lương"
       type="edit"
     >
-      <p className="text-gray-600 mb-2 font-semibold">Nhân viên: {payroll.name}</p>
-      <p className="text-gray-500 mb-6 text-sm">Tháng: {payroll.month}</p>
+      <div className="mb-4 pb-4 border-b border-gray-200">
+        <p className="text-sm text-gray-500">Nhân viên</p>
+        <p className="text-lg font-semibold text-gray-900">{payroll.name}</p>
+        <p className="text-sm text-gray-500 mt-1">Tháng {payroll.month}</p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Hiển thị giờ/phiếu làm được */}
+        {/* Giờ/Phiếu làm được */}
         <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
           <p className="text-xs text-gray-600 mb-1">Giờ/Phiếu làm được</p>
-          <p className="text-xl font-bold text-blue-600">
+          <p className="text-lg font-bold text-blue-600">
             {payroll.role && ["Manager", "Leader", "Support"].includes(payroll.role)
               ? `${payrollInfo.totalHours} giờ`
               : `${payrollInfo.totalProducts} phiếu`}
           </p>
         </div>
 
-        {/* Hiển thị lương cơ bản (tính tự động, không cho edit) */}
-        <div className="bg-gray-50 rounded-lg p-4 border">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Lương cơ bản (VND) - Tính tự động từ giờ/phiếu
+        {/* Lương cơ bản */}
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Lương cơ bản (Tính tự động)
           </label>
           <Input
             disabled
             value={formatCurrency(payrollInfo.baseSalary)}
+            className="text-gray-900 font-semibold"
           />
         </div>
 
+        {/* Thưởng + Khấu trừ */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Thưởng (VND)
             </label>
             <InputNumber
@@ -146,7 +151,7 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Khấu trừ (VND)
             </label>
             <InputNumber
@@ -160,13 +165,15 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Lương ròng</p>
-          <p className="text-2xl font-bold text-blue-600">{formatCurrency(netSalary)}</p>
+        {/* Lương ròng */}
+        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+          <p className="text-sm text-gray-600 mb-1">Lương ròng</p>
+          <p className="text-xl font-bold text-green-600">{formatCurrency(netSalary)}</p>
         </div>
 
+        {/* Trạng thái */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Trạng thái
           </label>
           <Select
@@ -180,17 +187,20 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
           />
         </div>
 
-        <div className="flex gap-4 mt-8">
+        {/* Buttons */}
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition"
+            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700
+                       hover:bg-gray-100 font-medium transition"
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium transition"
+            className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium
+                       hover:bg-blue-700 transition shadow-sm"
           >
             ✓ Cập nhật
           </button>

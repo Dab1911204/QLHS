@@ -73,10 +73,10 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
       isOpen={isOpen}
       type="edit"
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Họ tên */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Họ tên *
           </label>
           <Input
@@ -90,7 +90,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
         {/* Email + Phone */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email *
             </label>
             <Input
@@ -102,7 +102,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Điện thoại
             </label>
             <Input
@@ -116,7 +116,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
 
         {/* Mật khẩu */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Mật khẩu
           </label>
           <Input.Password
@@ -124,13 +124,13 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
             onChange={(e) => handleChange("password", e.target.value)}
             placeholder="Nhập mật khẩu mới (để trống nếu không thay đổi)"
           />
-          <p className="text-xs text-gray-500 mt-1">Mật khẩu phải có ít nhất 6 ký tự</p>
+          <p className="text-xs text-gray-500 mt-1.5">Tối thiểu 6 ký tự</p>
         </div>
 
-        {/* Vị trí + Vai trò */}
+        {/* Vai trò + Trạng thái */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Vai trò
             </label>
             <Select
@@ -146,7 +146,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Trạng thái
             </label>
             <Select
@@ -163,7 +163,7 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
 
         {/* Ngày bắt đầu */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Ngày bắt đầu
           </label>
           <DatePicker
@@ -179,22 +179,19 @@ const ModelEditEmployee = ({ onClose, isOpen, data, onUpdate }) => {
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-end gap-3 pt-6 border-t">
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-lg border border-gray-300
-                       text-gray-600 hover:bg-gray-100 transition"
+            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700
+                       hover:bg-gray-100 font-medium transition"
           >
             Hủy
           </button>
-
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-lg bg-gradient-to-r
-                       from-yellow-500 to-yellow-600 text-white font-semibold
-                       hover:from-yellow-600 hover:to-yellow-700
-                       shadow-md hover:shadow-lg transition"
+            className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium
+                       hover:bg-blue-700 transition shadow-sm"
           >
             ✓ Cập nhật
           </button>

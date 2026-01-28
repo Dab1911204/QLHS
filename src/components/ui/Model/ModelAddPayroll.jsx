@@ -55,7 +55,7 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
     <Model isOpen={isOpen} onClose={onClose} title="Thêm bảng lương" type="add">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Mã nhân viên *
           </label>
           <InputNumber
@@ -70,7 +70,7 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Tháng *
           </label>
           <DatePicker
@@ -86,7 +86,7 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Lương cơ bản (VND)
             </label>
             <InputNumber
@@ -98,11 +98,11 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
                   value !== null ? String(value) : ""
                 )
               }
-              placeholder="Nhập lương cơ bản (0 = tính từ giờ làm)"
+              placeholder="0 = tính từ giờ làm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Thưởng (VND)
             </label>
             <InputNumber
@@ -117,7 +117,7 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Khấu trừ (VND)
           </label>
           <InputNumber
@@ -133,21 +133,23 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
           />
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg text-sm text-gray-600">
-          <p>💡 Mẹo: Để trống "Lương cơ bản" hoặc nhập 0 để tính lương theo giờ làm thực tế</p>
+        <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm text-gray-600">
+          💡 Để trống hoặc nhập 0 để tính lương theo giờ làm thực tế
         </div>
 
-        <div className="flex gap-4 mt-8">
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition"
+            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700
+                       hover:bg-gray-100 font-medium transition"
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition"
+            className="px-6 py-2 rounded-lg bg-green-600 text-white font-medium
+                       hover:bg-green-700 transition shadow-sm"
           >
             ✓ Thêm
           </button>

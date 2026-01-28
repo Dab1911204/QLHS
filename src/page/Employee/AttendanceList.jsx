@@ -84,8 +84,15 @@ const AttendanceList = () => {
   };
 
   const handleSubmitCheckIn = () => {
-    if (!checkInTime || !workDescription) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+    // Kiểm tra input tối thiểu
+    if (!checkInTime || !checkOutTime) {
+      alert("Vui lòng nhập đủ giờ vào và giờ tan làm!");
+      return;
+    }
+
+    // Kiểm tra input cho Employee role
+    if (currentUser.role === "Employee" && !workDescription) {
+      alert("Vui lòng nhập mô tả công việc!");
       return;
     }
 
@@ -101,8 +108,7 @@ const AttendanceList = () => {
       const [outHour, outMin] = checkOutTime.split(":").map(Number);
       checkOutDecimal = outHour + outMin / 60;
     } else {
-      const now = new Date();
-      checkOutDecimal = now.getHours() + now.getMinutes() / 60;
+      checkOutDecimal = 0;
     }
 
     if (checkOutDecimal > checkInDecimal) {
@@ -116,7 +122,8 @@ const AttendanceList = () => {
       workHours = 0;
     }
 
-    if (inHour > 8) {
+    // Kiểm tra vào muộn: sau 8:30 AM
+    if (inHour > 8 || (inHour === 8 && inMin > 30)) {
       status = "late";
     }
 
@@ -128,16 +135,21 @@ const AttendanceList = () => {
       checkOut: checkOutTime || null,
       status,
       workHours: Math.max(0, Math.round(workHours * 10) / 10), // Làm tròn đến 0.1
-      workDescription,
-      productQuantity: parseInt(productQuantity) || 0,
-      unit: workUnit,
+      workDescription: currentUser.role === "Employee" ? workDescription : "",
+      productQuantity: currentUser.role === "Employee" ? (parseInt(productQuantity) || 0) : 0,
+      unit: currentUser.role === "Employee" ? workUnit : "",
     };
 
     addAttendance(newAttendance);
 
-    alert(
-      `✅ Chấm công thành công!\n⏰ Giờ vào: ${checkInTime}\n⏰ Giờ ra: ${checkOutTime || "Chưa chấm"}\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity || 0} ${workUnit}\n${status === "late" ? "⚠️ Vào muộn\n" : ""}⌛ Giờ làm: ${newAttendance.workHours}h`,
-    );
+    // Tạo thông báo theo role
+    let alertMessage = `✅ Chấm công thành công!\n⏰ Giờ vào: ${checkInTime}\n⏰ Giờ tan làm: ${checkOutTime}\n${status === "late" ? "⚠️ Vào muộn\n" : ""}⌛ Giờ làm: ${newAttendance.workHours}h`;
+    
+    if (currentUser.role === "Employee") {
+      alertMessage += `\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity || 0} ${workUnit}`;
+    }
+
+    alert(alertMessage);
     setShowCheckInModal(false);
   };
 

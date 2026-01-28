@@ -68,10 +68,10 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
       isOpen={isOpen}
       type="add"
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Họ tên */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Họ tên *
           </label>
           <Input
@@ -85,7 +85,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
         {/* Email + Phone */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email *
             </label>
             <Input
@@ -97,7 +97,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Điện thoại
             </label>
             <Input
@@ -111,7 +111,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
 
         {/* Mật khẩu */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Mật khẩu *
           </label>
           <Input.Password
@@ -122,10 +122,10 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
           />
         </div>
 
-        {/*Vai trò + Trạng thái*/}
+        {/* Vai trò + Trạng thái */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Vai trò
             </label>
             <Select
@@ -141,7 +141,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Trạng thái
             </label>
             <Select
@@ -158,7 +158,7 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
 
         {/* Ngày bắt đầu */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Ngày bắt đầu
           </label>
           <DatePicker
@@ -174,24 +174,21 @@ const ModelAddEmployee = ({ onClose, isOpen, onAdd }) => {
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-end gap-3 pt-6 border-t">
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-lg border border-gray-300
-                       text-gray-600 hover:bg-gray-100 transition"
+            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700
+                       hover:bg-gray-100 font-medium transition"
           >
             Hủy
           </button>
-
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-lg bg-gradient-to-r
-                       from-green-500 to-green-600 text-white font-semibold
-                       hover:from-green-600 hover:to-green-700
-                       shadow-md hover:shadow-lg transition"
+            className="px-6 py-2 rounded-lg bg-green-600 text-white font-medium
+                       hover:bg-green-700 transition shadow-sm"
           >
-            + Thêm nhân sự
+            ✓ Thêm
           </button>
         </div>
       </form>
