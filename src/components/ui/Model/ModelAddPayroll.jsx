@@ -1,16 +1,21 @@
 import { useState } from "react";
 import Model from "../../common/Model";
-import { InputNumber, DatePicker, Input } from "antd";
+import { Select } from "antd";
 import dayjs from "dayjs";
+import { useData } from "../../../contexts/Data/DataContext";
+
+const getInitialFormData = () => {
+  const now = dayjs();
+  return {
+    employeeIds: [],
+    month: now.month() + 1,
+    year: now.year(),
+  };
+};
 
 const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
-  const [formData, setFormData] = useState({
-    employeeId: "",
-    month: "",
-    baseSalary: "",
-    bonus: "0",
-    deduction: "0",
-  });
+  const { data } = useData();
+  const [formData, setFormData] = useState(getInitialFormData);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -21,33 +26,33 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!formData.employeeId || !formData.month) {
+
+    if (!formData.employeeIds.length || !formData.month || !formData.year) {
       alert("Vui lòng chọn nhân viên và tháng!");
       return;
     }
 
-    const payrollData = {
-      employeeId: parseInt(formData.employeeId),
-      month: formData.month,
-      baseSalary: formData.baseSalary ? parseInt(formData.baseSalary) : 0,
-      bonus: formData.bonus ? parseInt(formData.bonus) : 0,
-      deduction: formData.deduction ? parseInt(formData.deduction) : 0,
-    };
+    const monthStr = `${String(formData.month).padStart(2, "0")}/${formData.year}`;
 
-    if (onAdd) {
-      onAdd(payrollData);
-    }
-
-    // Reset form
-    setFormData({
-      employeeId: "",
-      month: "",
-      baseSalary: "",
-      bonus: "0",
-      deduction: "0",
+    formData.employeeIds.forEach((employeeId) => {
+      onAdd?.({
+        employeeId,
+        month: monthStr,
+      });
     });
+
+    // reset form sau khi submit
+    setFormData(getInitialFormData());
+    onClose();
   };
+
+  // danh sách nhân viên đang tham gia
+  const employeeOptions = data.employees
+    .filter((emp) => emp.status === "Đang tham gia")
+    .map((emp) => ({
+      value: emp.id,
+      label: `${emp.name} (${emp.role})`,
+    }));
 
   if (!isOpen) return null;
 
@@ -56,85 +61,56 @@ const ModelAddPayroll = ({ isOpen, onClose, onAdd }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Mã nhân viên *
+            Chọn nhân viên *
           </label>
-          <InputNumber
+          <Select
+            mode="multiple"
             className="w-full"
-            value={formData.employeeId ? Number(formData.employeeId) : null}
-            onChange={(value) =>
-              handleChange("employeeId", value !== null ? String(value) : "")
-            }
-            placeholder="Nhập mã nhân viên"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Tháng *
-          </label>
-          <DatePicker
-            picker="month"
-            className="w-full"
-            value={formData.month ? dayjs(formData.month, "MM/YYYY") : null}
-            onChange={(date) =>
-              handleChange("month", date ? date.format("MM/YYYY") : "")
-            }
-            placeholder="Chọn tháng"
+            value={formData.employeeIds}
+            onChange={(value) => handleChange("employeeIds", value)}
+            options={employeeOptions}
+            placeholder="Chọn nhân viên cần thêm lương"
+            maxTagCount="responsive"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Lương cơ bản (VND)
+              Tháng *
             </label>
-            <InputNumber
+            <Select
               className="w-full"
-              value={formData.baseSalary ? Number(formData.baseSalary) : null}
-              onChange={(value) =>
-                handleChange(
-                  "baseSalary",
-                  value !== null ? String(value) : ""
-                )
-              }
-              placeholder="0 = tính từ giờ làm"
+              value={formData.month}
+              onChange={(value) => handleChange("month", value)}
+              options={Array.from({ length: 12 }, (_, i) => ({
+                value: i + 1,
+                label: `Tháng ${i + 1}`,
+              }))}
+              placeholder="Chọn tháng"
             />
           </div>
+
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Thưởng (VND)
+              Năm *
             </label>
-            <InputNumber
+            <Select
               className="w-full"
-              value={formData.bonus ? Number(formData.bonus) : 0}
-              onChange={(value) =>
-                handleChange("bonus", value !== null ? String(value) : "0")
-              }
-              placeholder="0"
+              value={formData.year}
+              onChange={(value) => handleChange("year", value)}
+              options={Array.from({ length: 5 }, (_, i) => {
+                const year = new Date().getFullYear() - 2 + i;
+                return { value: year, label: year.toString() };
+              })}
+              placeholder="Chọn năm"
             />
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Khấu trừ (VND)
-          </label>
-          <InputNumber
-            className="w-full"
-            value={formData.deduction ? Number(formData.deduction) : 0}
-            onChange={(value) =>
-              handleChange(
-                "deduction",
-                value !== null ? String(value) : "0"
-              )
-            }
-            placeholder="0"
-          />
         </div>
 
         <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm text-gray-600">
-          💡 Để trống hoặc nhập 0 để tính lương theo giờ làm thực tế
+          💡 Chọn nhân viên và tháng để thêm bảng lương. Thưởng/Khấu trừ sẽ được
+          xử lý trong phần sửa.
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">

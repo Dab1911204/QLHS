@@ -29,11 +29,12 @@ const PayrollList = () => {
   const [search, setSearch] = useState("");
   const [filterPosition, setFilterPosition] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedPayroll, setSelectedPayroll] = useState(null);
-  const [filterMonth, setFilterMonth] = useState("all");
 
   const allPayrollRecords = getAllPayrolls(data);
 
@@ -49,12 +50,17 @@ const PayrollList = () => {
       const matchStatus =
         filterStatus === "all" || record.status === filterStatus;
 
+      // Parse month from "MM/YYYY" format
+      const recordMonth = parseInt(record.month.split("/")[0]);
+      const recordYear = parseInt(record.month.split("/")[1]);
       const matchMonth =
-        filterMonth === "all" || record.month === filterMonth;
+        filterMonth === "all" || recordMonth === filterMonth;
+      const matchYear =
+        filterYear === "all" || recordYear === filterYear;
 
-      return matchSearch && matchPosition && matchStatus && matchMonth;
+      return matchSearch && matchPosition && matchStatus && matchMonth && matchYear;
     });
-  }, [search, filterPosition, filterStatus, filterMonth, allPayrollRecords]);
+  }, [search, filterPosition, filterStatus, filterMonth, filterYear, allPayrollRecords]);
 
   const handleShowAdd = () => {
     setSelectedPayroll(null);
@@ -73,16 +79,17 @@ const PayrollList = () => {
 
   const handleAddPayroll = (newPayroll) => {
     // Luôn tính lương cơ bản từ giờ làm thực tế
-    const { month: monthStr, employeeId, bonus, deduction } = newPayroll;
-    const [month, year] = monthStr.split("/");
+    const { month: monthStr, employeeId } = newPayroll;
+    const monthValue = parseInt(monthStr.split("/")[0]);
+    const yearValue = parseInt(monthStr.split("/")[1]);
     
     const calculatedPayroll = calculateMonthlyPayroll(
       data, 
       employeeId, 
-      parseInt(month), 
-      parseInt(year), 
-      bonus || 0, 
-      deduction || 0
+      monthValue, 
+      yearValue, 
+      0, 
+      0
     );
 
     if (calculatedPayroll) {
@@ -135,15 +142,25 @@ const PayrollList = () => {
           <Select
             value={filterMonth}
             onChange={(value) => setFilterMonth(value)}
-            className="min-w-[200px]"
+            className="min-w-[150px]"
             options={[
               { value: "all", label: "Tất cả tháng" },
-              { value: "12/2025", label: "Tháng 12/2025" },
-              { value: "11/2025", label: "Tháng 11/2025" },
-              { value: "10/2025", label: "Tháng 10/2025" },
-              { value: "09/2025", label: "Tháng 09/2025" },
-              { value: "08/2025", label: "Tháng 08/2025" },
-              { value: "07/2025", label: "Tháng 07/2025" },
+              ...Array.from({ length: 12 }, (_, i) => ({
+                value: i + 1,
+                label: `Tháng ${i + 1}`,
+              })),
+            ]}
+          />
+          <Select
+            value={filterYear}
+            onChange={(value) => setFilterYear(value)}
+            className="min-w-[120px]"
+            options={[
+              { value: "all", label: "Tất cả năm" },
+              ...Array.from({ length: 5 }, (_, i) => {
+                const year = new Date().getFullYear() - 2 + i;
+                return { value: year, label: year.toString() };
+              }),
             ]}
           />
           <Select
