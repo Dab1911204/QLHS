@@ -163,10 +163,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Phát triển tính năng dashboard",
       productQuantity: 1,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 2,
@@ -175,10 +176,11 @@ const initialData = {
       checkIn: "08:15",
       checkOut: "17:45",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Fix bug giao diện",
       productQuantity: 3,
-      unit: "phiếu",
+      productQuantityOT: 1,
+      unit: "Scan",
     },
     {
       id: 3,
@@ -190,7 +192,8 @@ const initialData = {
       workHours: 0,
       workDescription: null,
       productQuantity: 0,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 4,
@@ -199,10 +202,11 @@ const initialData = {
       checkIn: "09:00",
       checkOut: "17:00",
       status: "late",
-      workHours: 8,
+      workHours: 7,
       workDescription: "Meeting với client",
       productQuantity: 1,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 5,
@@ -211,10 +215,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Code review",
       productQuantity: 2,
-      unit: "phiếu",
+      productQuantityOT: 1,
+      unit: "Nhập liệu",
     },
     // Nguyễn Văn B - Tháng 12/2025
     {
@@ -224,10 +229,11 @@ const initialData = {
       checkIn: "08:30",
       checkOut: "17:00",
       status: "present",
-      workHours: 8.5,
+      workHours: 7.5,
       workDescription: "Code review",
       productQuantity: 5,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 7,
@@ -236,10 +242,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Phát triển API authentication",
       productQuantity: 3,
-      unit: "phiếu",
+      productQuantityOT: 1,
+      unit: "Nhập liệu",
     },
     {
       id: 8,
@@ -248,10 +255,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:00",
       status: "present",
-      workHours: 9,
+      workHours: 8,
       workDescription: "Unit testing",
       productQuantity: 10,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 9,
@@ -260,10 +268,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Deploy to production",
       productQuantity: 1,
-      unit: "phiếu",
+      productQuantityOT: 1,
+      unit: "Nhập liệu",
     },
     // Nguyễn Văn C - Tháng 12/2025
     {
@@ -273,10 +282,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Xây dựng giao diện",
       productQuantity: 2,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 11,
@@ -285,10 +295,11 @@ const initialData = {
       checkIn: "08:30",
       checkOut: "17:30",
       status: "present",
-      workHours: 9,
+      workHours: 8,
       workDescription: "Responsive design",
       productQuantity: 1,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 12,
@@ -297,10 +308,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Component refactoring",
       productQuantity: 5,
-      unit: "phiếu",
+      productQuantityOT: 1,
+      unit: "Nhập liệu",
     },
     // Trần Thị D - Tháng 12/2025
     {
@@ -310,10 +322,11 @@ const initialData = {
       checkIn: "09:00",
       checkOut: "17:00",
       status: "late",
-      workHours: 8,
+      workHours: 7,
       workDescription: "Testing new feature",
       productQuantity: 8,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Check scan",
     },
     {
       id: 14,
@@ -322,10 +335,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "16:30",
       status: "present",
-      workHours: 8.5,
+      workHours: 7.5,
       workDescription: "Bug report",
       productQuantity: 5,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Scan",
     },
     {
       id: 15,
@@ -334,10 +348,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:00",
       status: "present",
-      workHours: 9,
+      workHours: 8,
       workDescription: "Regression testing",
       productQuantity: 12,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     // Lê Văn E - Tháng 12/2025
     {
@@ -347,10 +362,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:00",
       status: "present",
-      workHours: 9,
+      workHours: 8,
       workDescription: "Learning React",
       productQuantity: 0,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Check nhập liệu",
     },
     {
       id: 17,
@@ -359,10 +375,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:00",
       status: "present",
-      workHours: 9,
+      workHours: 8,
       workDescription: "Practice coding",
       productQuantity: 1,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Nhập liệu",
     },
     {
       id: 18,
@@ -371,10 +388,11 @@ const initialData = {
       checkIn: "08:00",
       checkOut: "17:30",
       status: "present",
-      workHours: 9.5,
+      workHours: 8.5,
       workDescription: "Complete assignment",
       productQuantity: 2,
-      unit: "phiếu",
+      productQuantityOT: 0,
+      unit: "Check scan",
     },
   ],
 };
@@ -436,7 +454,16 @@ export const getAllPayrolls = (data) => {
     if (["Manager", "Leader", "Support"].includes(employee.role)) {
       baseSalary = calculateSalaryByHours(totalHours);
     } else if (employee.role === "Employee") {
-      baseSalary = calculateSalaryByProducts(totalHours, totalProducts);
+      // Lấy danh sách attendance của tháng để tính lương theo unit
+      const attendanceRecords = data.attendance.filter((att) => {
+        const attDate = new Date(att.date);
+        return (
+          att.employeeId === employee.id &&
+          attDate.getMonth() + 1 === month &&
+          attDate.getFullYear() === year
+        );
+      });
+      baseSalary = calculateSalaryByProductsWithUnit(attendanceRecords);
     }
 
     // Tính netSalary = baseSalary + bonus - deduction
@@ -570,7 +597,10 @@ export const addAttendance = (data, newAttendance) => {
 
   return {
     ...data,
-    attendance: [...data.attendance, attendance],
+    attendance: [...data.attendance, {
+      ...attendance,
+      productQuantityOT: newAttendance.productQuantityOT || 0,
+    }],
   };
 };
 
@@ -731,6 +761,7 @@ export const getTotalHoursByEmployeeAndMonth = (data, employeeId, month, year) =
 
 /**
  * Tính tổng số phiếu/sản phẩm của nhân viên trong tháng
+ * Gồm cả productQuantity (8h) và productQuantityOT (OT)
  */
 export const getTotalProductsByEmployeeAndMonth = (data, employeeId, month, year) => {
   return data.attendance
@@ -742,7 +773,7 @@ export const getTotalProductsByEmployeeAndMonth = (data, employeeId, month, year
         attDate.getFullYear() === year
       );
     })
-    .reduce((sum, att) => sum + (att.productQuantity || 0), 0);
+    .reduce((sum, att) => sum + (att.productQuantity || 0) + (att.productQuantityOT || 0), 0);
 };
 
 /**
@@ -775,6 +806,61 @@ export const calculateSalaryByHours = (totalHours, hourlyRate = 40000) => {
  * - Tổng KPI = 650
  * - Lương = (180k/650) × 500 + (180k/650) × 150 × 1.4
  */
+/**
+ * Map unit thành KPI tương ứng
+ */
+const UNIT_KPI_MAP = {
+  "Nhập liệu": 650,
+  "Check nhập liệu": 900,
+  "Scan": 1700,
+  "Check scan": 2200,
+};
+
+/**
+ * Tính lương theo sản phẩm/KPI với unit khác nhau
+ * @param {Array} attendanceRecords - Danh sách chấm công của tháng
+ * @returns {Number} Tổng lương được tính toán
+ */
+export const calculateSalaryByProductsWithUnit = (attendanceRecords) => {
+  const dailyRate = 180000; // 180k một ngày
+  const standardHours = 8;
+  
+  if (!attendanceRecords || attendanceRecords.length === 0) return 0;
+
+  let totalSalary = 0;
+
+  attendanceRecords.forEach((record) => {
+    const { productQuantity = 0, productQuantityOT = 0, unit = "Nhập liệu", workHours = 0 } = record;
+    
+    // Tổng sản phẩm = sản phẩm làm trong 8h + sản phẩm làm trong OT
+    const totalProducts = productQuantity + productQuantityOT;
+    if (totalProducts === 0) return;
+
+    // Lấy KPI tương ứng với unit
+    const kpi = UNIT_KPI_MAP[unit] || 650;
+    const ratePerKPI = dailyRate / kpi;
+
+    // Tính lương dựa trên giờ làm
+    let daySalary = 0;
+    if (workHours <= standardHours) {
+      // Không có OT - tất cả sản phẩm được tính trong 8h
+      daySalary = Math.floor(ratePerKPI * totalProducts);
+    } else {
+      // Có OT - tính riêng từng phần
+      // productQuantity: lương bình thường
+      const salary8h = Math.floor(ratePerKPI * productQuantity);
+      // productQuantityOT: lương OT (hệ số 1.4)
+      const salaryOT = Math.floor(ratePerKPI * productQuantityOT * 1.4);
+
+      daySalary = salary8h + salaryOT;
+    }
+
+    totalSalary += daySalary;
+  });
+
+  return totalSalary;
+};
+
 export const calculateSalaryByProducts = (totalHours, totalProducts) => {
   const dailyRate = 180000; // 180k một ngày
   const standardHours = 8;
@@ -793,9 +879,7 @@ export const calculateSalaryByProducts = (totalHours, totalProducts) => {
     kpiInOT = 0;
   } else {
     // Có OT, chia KPI tỉ lệ với giờ làm
-    const otHours = totalHours - standardHours;
     const ratio8h = standardHours / totalHours;
-    const ratioOT = otHours / totalHours;
     
     kpiIn8Hours = Math.floor(totalProducts * ratio8h);
     kpiInOT = totalProducts - kpiIn8Hours;
@@ -829,10 +913,20 @@ export const calculateMonthlyPayroll = (data, employeeId, month, year, bonus = 0
     totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
     baseSalary = calculateSalaryByHours(totalHours);
   } else if (employee.role === "Employee") {
-    // Tính lương theo sản phẩm/KPI
+    // Tính lương theo sản phẩm/KPI với unit khác nhau
     totalHours = getTotalHoursByEmployeeAndMonth(data, employeeId, month, year);
     totalProducts = getTotalProductsByEmployeeAndMonth(data, employeeId, month, year);
-    baseSalary = calculateSalaryByProducts(totalHours, totalProducts);
+    
+    // Lấy danh sách attendance để tính lương theo unit
+    const attendanceRecords = data.attendance.filter((att) => {
+      const attDate = new Date(att.date);
+      return (
+        att.employeeId === employeeId &&
+        attDate.getMonth() + 1 === month &&
+        attDate.getFullYear() === year
+      );
+    });
+    baseSalary = calculateSalaryByProductsWithUnit(attendanceRecords);
   }
 
   const netSalary = baseSalary + bonus - deduction;

@@ -39,7 +39,8 @@ const AttendanceList = () => {
   const [checkOutTime, setCheckOutTime] = useState("");
   const [workDescription, setWorkDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
-  const [workUnit, setWorkUnit] = useState("module");
+  const [productQuantityOT, setProductQuantityOT] = useState("");
+  const [workUnit, setWorkUnit] = useState("Nhập liệu");
   const employees = data.employees;
 
   const filteredEmployees = useMemo(() => {
@@ -87,7 +88,8 @@ const AttendanceList = () => {
     setShowCheckInModal(true);
     setWorkDescription("");
     setProductQuantity("");
-    setWorkUnit("module");
+    setProductQuantityOT("");
+    setWorkUnit("Nhập liệu");
   };
 
   const handleSubmitCheckIn = () => {
@@ -144,6 +146,7 @@ const AttendanceList = () => {
       workHours: Math.max(0, Math.round(workHours * 10) / 10), // Làm tròn đến 0.1
       workDescription: currentUser.role === "Employee" ? workDescription : "",
       productQuantity: currentUser.role === "Employee" ? (parseInt(productQuantity) || 0) : 0,
+      productQuantityOT: currentUser.role === "Employee" ? (parseInt(productQuantityOT) || 0) : 0,
       unit: currentUser.role === "Employee" ? workUnit : "",
     };
 
@@ -153,7 +156,7 @@ const AttendanceList = () => {
     let alertMessage = `✅ Chấm công thành công!\n⏰ Giờ vào: ${checkInTime}\n⏰ Giờ tan làm: ${checkOutTime}\n${status === "late" ? "⚠️ Vào muộn\n" : ""}⌛ Giờ làm: ${newAttendance.workHours}h`;
     
     if (currentUser.role === "Employee") {
-      alertMessage += `\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity || 0} ${workUnit}`;
+      alertMessage += `\n📝 Mô tả: ${workDescription}\n📊 Số lượng: ${productQuantity || 0} phiếu (8h)\n⚡ Số lượng OT: ${productQuantityOT || 0} phiếu\n📦 Loại: ${workUnit}`;
     }
 
     alert(alertMessage);
@@ -262,11 +265,13 @@ const AttendanceList = () => {
         checkOutTime={checkOutTime}
         workDescription={workDescription}
         productQuantity={productQuantity}
+        productQuantityOT={productQuantityOT}
         workUnit={workUnit}
         onCheckInTimeChange={setCheckInTime}
         onCheckOutTimeChange={setCheckOutTime}
         onWorkDescriptionChange={setWorkDescription}
         onProductQuantityChange={setProductQuantity}
+        onProductQuantityOTChange={setProductQuantityOT}
         onWorkUnitChange={setWorkUnit}
         onSubmit={handleSubmitCheckIn}
         onClose={() => setShowCheckInModal(false)}

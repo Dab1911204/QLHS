@@ -21,6 +21,39 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
     return getEmployeeRoleByPayroll(data, payroll.id);
   }, [payroll, data]);
 
+  // Tính breakdown theo unit cho Employee (gồm cả OT)
+  const unitBreakdown = useMemo(() => {
+    if (!payroll || !data || payroll.role !== "Employee") return null;
+
+    const month = parseInt(payroll.month.split("/")[0]);
+    const year = parseInt(payroll.month.split("/")[1]);
+
+    const breakdown = {
+      "Nhập liệu": 0,
+      "Check nhập liệu": 0,
+      "Scan": 0,
+      "Check scan": 0,
+    };
+
+    // Lấy attendance records của tháng
+    data.attendance.forEach((att) => {
+      const attDate = new Date(att.date);
+      if (
+        att.employeeId === payroll.employeeId &&
+        attDate.getMonth() + 1 === month &&
+        attDate.getFullYear() === year
+      ) {
+        const unit = att.unit || "Nhập liệu";
+        if (breakdown.hasOwn(unit)) {
+          // Tính tổng cả productQuantity (8h) và productQuantityOT
+          breakdown[unit] += (att.productQuantity || 0) + (att.productQuantityOT || 0);
+        }
+      }
+    });
+
+    return breakdown;
+  }, [payroll, data]);
+
   if (!isOpen || !payroll) return null;
 
   const netSalary = payroll.baseSalary + (payroll.bonus || 0) - (payroll.deduction || 0);
@@ -57,12 +90,29 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
           </h3>
 
           <div className="mb-4 pb-4 border-b">
-            <p className="text-sm text-gray-600 mb-2">Giờ/Phiếu làm được</p>
-            <p className="text-lg font-bold text-blue-600">
+            <p className="text-sm text-gray-600 mb-3">Giờ/Phiếu làm được</p>
+            <p className="text-lg font-bold text-blue-600 mb-3">
               {["Manager", "Leader", "Support"].includes(payroll.role)
                 ? `${payroll.totalHours || 0} giờ`
                 : `${payroll.totalProducts || 0} phiếu`}
             </p>
+
+            {/* Chi tiết breakdown theo unit cho Employee */}
+            {payroll.role === "Employee" && unitBreakdown && (
+              <div className="bg-blue-50 rounded-lg p-3 space-y-2">
+                <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Chi tiết theo loại công việc
+                </p>
+                {Object.entries(unitBreakdown).map(([unit, quantity]) => (
+                  quantity > 0 && (
+                    <div key={unit} className="flex justify-between items-center text-sm">
+                      <span className="text-gray-700">{unit}</span>
+                      <span className="font-semibold text-blue-600">{quantity} phiếu</span>
+                    </div>
+                  )
+                ))}
+              </div>
+            )}
           </div>
 
           <SalaryRow label="Lương cơ bản" value={payroll.baseSalary} />

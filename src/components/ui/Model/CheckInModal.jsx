@@ -3,8 +3,10 @@ import { TimePicker, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
 
 const UNIT_OPTIONS = [
-  { value: "phiếu", label: "Nhập tài liệu" },
-  { value: "bug", label: "Scan" },
+  { value: "Nhập liệu", label: "Nhập liệu" },
+  { value: "Check nhập liệu", label: "Check nhập liệu" },
+  { value: "Scan", label: "Scan" },
+  { value: "Check scan", label: "Check scan" },
 ];
 
 const CheckInModal = ({
@@ -14,11 +16,13 @@ const CheckInModal = ({
   checkOutTime,
   workDescription,
   productQuantity,
-  workUnit = "module",
+  productQuantityOT = 0,
+  workUnit = "Nhập liệu",
   onCheckInTimeChange,
   onCheckOutTimeChange,
   onWorkDescriptionChange,
   onProductQuantityChange,
+  onProductQuantityOTChange,
   onWorkUnitChange,
   onSubmit,
   onClose,
@@ -145,20 +149,35 @@ const CheckInModal = ({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    📦 Công việc
-                  </label>
-                  <Select
-                    value={workUnit}
-                    onChange={(value) => onWorkUnitChange(value)}
-                    className="w-full"
-                    options={UNIT_OPTIONS.map((option) => ({
-                      label: option.label,
-                      value: option.value,
-                    }))}
-                  />
-                </div>
+                {workHours > 8 && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      ⚡ Số lượng (OT)
+                    </label>
+                    <InputNumber
+                      value={productQuantityOT}
+                      onChange={(value) => onProductQuantityOTChange(value ?? "")}
+                      placeholder="Nhập số lượng OT..."
+                      min={0}
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  📦 Loại công việc
+                </label>
+                <Select
+                  value={workUnit}
+                  onChange={(value) => onWorkUnitChange(value)}
+                  className="w-full"
+                  options={UNIT_OPTIONS.map((option) => ({
+                    label: option.label,
+                    value: option.value,
+                  }))}
+                />
               </div>
             </>
           )}

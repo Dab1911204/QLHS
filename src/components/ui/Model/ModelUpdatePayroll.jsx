@@ -6,7 +6,7 @@ import {
   getTotalHoursByEmployeeAndMonth,
   getTotalProductsByEmployeeAndMonth,
   calculateSalaryByHours,
-  calculateSalaryByProducts,
+  calculateSalaryByProductsWithUnit,
 } from "../../../data/data";
 
 const formatCurrency = (value) => {
@@ -61,7 +61,16 @@ const ModelUpdatePayroll = ({ isOpen, onClose, payroll, onUpdate }) => {
             month,
             year
           );
-          baseSalary = calculateSalaryByProducts(totalProducts);
+          // Lấy attendance records để tính lương theo unit
+          const attendanceRecords = data.attendance.filter((att) => {
+            const attDate = new Date(att.date);
+            return (
+              att.employeeId === payroll.employeeId &&
+              attDate.getMonth() + 1 === month &&
+              attDate.getFullYear() === year
+            );
+          });
+          baseSalary = calculateSalaryByProductsWithUnit(attendanceRecords);
         }
 
         setPayrollInfo({ totalHours, totalProducts, baseSalary });
