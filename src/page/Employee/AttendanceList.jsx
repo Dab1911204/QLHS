@@ -43,10 +43,17 @@ const AttendanceList = () => {
   const employees = data.employees;
 
   const filteredEmployees = useMemo(() => {
-    return employees.filter((emp) =>
+    let result = employees.filter((emp) =>
       emp.name.toLowerCase().includes(search.toLowerCase()),
     );
-  }, [search, employees]);
+
+    // Nếu user là Employee, chỉ có thể xem chấm công của chính mình
+    if (currentUser.role === "Employee") {
+      result = result.filter((emp) => emp.id === currentUser.id);
+    }
+
+    return result;
+  }, [search, employees, currentUser]);
 
   const getEmployeeAttendanceByMonth = (employeeId) => {
     return getAttendanceByEmployeeId(data, employeeId).filter((record) => {

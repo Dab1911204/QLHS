@@ -3,9 +3,10 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Input, Checkbox, Button } from "antd";
 import { setUser } from "../../redux/slices/userInfo";
-import initialData from "../../data/data";
+import { useData } from "../../contexts/Data/DataContext";
 
 const ClientLogin = () => {
+  const {data} = useData();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +22,7 @@ const ClientLogin = () => {
     setLoading(true);
 
     // Tìm user trong database
-    const user = initialData.employees.find(
+    const user = data.employees.find(
       (emp) => emp.email === email && emp.password === password
     );
 

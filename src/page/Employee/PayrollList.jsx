@@ -56,8 +56,17 @@ const PayrollList = () => {
       const matchMonth = filterMonth === "all" || recordMonth === filterMonth;
       const matchYear = filterYear === "all" || recordYear === filterYear;
 
+      // Nếu user là Employee, chỉ có thể xem bảng lương của chính mình
+      const matchEmployeeId =
+        userInfo.role !== "Employee" || record.employeeId === userInfo.id;
+
       return (
-        matchSearch && matchPosition && matchStatus && matchMonth && matchYear
+        matchSearch &&
+        matchPosition &&
+        matchStatus &&
+        matchMonth &&
+        matchYear &&
+        matchEmployeeId
       );
     });
   }, [
@@ -67,6 +76,7 @@ const PayrollList = () => {
     filterMonth,
     filterYear,
     allPayrollRecords,
+    userInfo,
   ]);
 
   const handleShowAdd = () => {

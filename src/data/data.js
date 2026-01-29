@@ -166,7 +166,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Phát triển tính năng dashboard",
       productQuantity: 1,
-      unit: "module",
+      unit: "phiếu",
     },
     {
       id: 2,
@@ -178,7 +178,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Fix bug giao diện",
       productQuantity: 3,
-      unit: "bug",
+      unit: "phiếu",
     },
     {
       id: 3,
@@ -190,7 +190,7 @@ const initialData = {
       workHours: 0,
       workDescription: null,
       productQuantity: 0,
-      unit: null,
+      unit: "phiếu",
     },
     {
       id: 4,
@@ -202,7 +202,7 @@ const initialData = {
       workHours: 8,
       workDescription: "Meeting với client",
       productQuantity: 1,
-      unit: "meeting",
+      unit: "phiếu",
     },
     {
       id: 5,
@@ -214,7 +214,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Code review",
       productQuantity: 2,
-      unit: "file",
+      unit: "phiếu",
     },
     // Nguyễn Văn B - Tháng 12/2025
     {
@@ -227,7 +227,7 @@ const initialData = {
       workHours: 8.5,
       workDescription: "Code review",
       productQuantity: 5,
-      unit: "file",
+      unit: "phiếu",
     },
     {
       id: 7,
@@ -239,7 +239,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Phát triển API authentication",
       productQuantity: 3,
-      unit: "endpoint",
+      unit: "phiếu",
     },
     {
       id: 8,
@@ -251,7 +251,7 @@ const initialData = {
       workHours: 9,
       workDescription: "Unit testing",
       productQuantity: 10,
-      unit: "test",
+      unit: "phiếu",
     },
     {
       id: 9,
@@ -263,7 +263,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Deploy to production",
       productQuantity: 1,
-      unit: "deployment",
+      unit: "phiếu",
     },
     // Nguyễn Văn C - Tháng 12/2025
     {
@@ -276,7 +276,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Xây dựng giao diện",
       productQuantity: 2,
-      unit: "screen",
+      unit: "phiếu",
     },
     {
       id: 11,
@@ -288,7 +288,7 @@ const initialData = {
       workHours: 9,
       workDescription: "Responsive design",
       productQuantity: 1,
-      unit: "module",
+      unit: "phiếu",
     },
     {
       id: 12,
@@ -300,7 +300,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Component refactoring",
       productQuantity: 5,
-      unit: "component",
+      unit: "phiếu",
     },
     // Trần Thị D - Tháng 12/2025
     {
@@ -313,7 +313,7 @@ const initialData = {
       workHours: 8,
       workDescription: "Testing new feature",
       productQuantity: 8,
-      unit: "test case",
+      unit: "phiếu",
     },
     {
       id: 14,
@@ -325,7 +325,7 @@ const initialData = {
       workHours: 8.5,
       workDescription: "Bug report",
       productQuantity: 5,
-      unit: "bug",
+      unit: "phiếu",
     },
     {
       id: 15,
@@ -337,7 +337,7 @@ const initialData = {
       workHours: 9,
       workDescription: "Regression testing",
       productQuantity: 12,
-      unit: "test case",
+      unit: "phiếu",
     },
     // Lê Văn E - Tháng 12/2025
     {
@@ -350,7 +350,7 @@ const initialData = {
       workHours: 9,
       workDescription: "Learning React",
       productQuantity: 0,
-      unit: null,
+      unit: "phiếu",
     },
     {
       id: 17,
@@ -362,7 +362,7 @@ const initialData = {
       workHours: 9,
       workDescription: "Practice coding",
       productQuantity: 1,
-      unit: "exercise",
+      unit: "phiếu",
     },
     {
       id: 18,
@@ -374,7 +374,7 @@ const initialData = {
       workHours: 9.5,
       workDescription: "Complete assignment",
       productQuantity: 2,
-      unit: "assignment",
+      unit: "phiếu",
     },
   ],
 };
