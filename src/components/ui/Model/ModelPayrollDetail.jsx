@@ -21,7 +21,7 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
     return getEmployeeRoleByPayroll(data, payroll.id);
   }, [payroll, data]);
 
-  // Tính breakdown theo unit cho Employee (gồm cả OT)
+  // Tính breakdown theo unit cho Employee
   const unitBreakdown = useMemo(() => {
     if (!payroll || !data || payroll.role !== "Employee") return null;
 
@@ -44,9 +44,40 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
         attDate.getFullYear() === year
       ) {
         const unit = att.unit || "Nhập liệu";
-        if (breakdown.hasOwn(unit)) {
+        if (breakdown.hasOwnProperty(unit)) {
           // Tính tổng cả productQuantity (8h) và productQuantityOT
-          breakdown[unit] += (att.productQuantity || 0) + (att.productQuantityOT || 0);
+          breakdown[unit] += (att.productQuantity || 0);
+        }
+      }
+    });
+
+    return breakdown;
+  }, [payroll, data]);
+  const unitBreakdownOT = useMemo(() => {
+    if (!payroll || !data || payroll.role !== "Employee") return null;
+
+    const month = parseInt(payroll.month.split("/")[0]);
+    const year = parseInt(payroll.month.split("/")[1]);
+
+    const breakdown = {
+      "Nhập liệu": 0,
+      "Check nhập liệu": 0,
+      "Scan": 0,
+      "Check scan": 0,
+    };
+
+    // Lấy attendance records của tháng
+    data.attendance.forEach((att) => {
+      const attDate = new Date(att.date);
+      if (
+        att.employeeId === payroll.employeeId &&
+        attDate.getMonth() + 1 === month &&
+        attDate.getFullYear() === year
+      ) {
+        const unit = att.unit || "Nhập liệu";
+        if (breakdown.hasOwnProperty(unit)) {
+          // Tính tổng cả productQuantity (8h) và productQuantityOT
+          breakdown[unit] += (att.productQuantityOT || 0);
         }
       }
     });
@@ -104,6 +135,17 @@ const ModelPayrollDetail = ({ isOpen, onClose, payroll }) => {
                   Chi tiết theo loại công việc
                 </p>
                 {Object.entries(unitBreakdown).map(([unit, quantity]) => (
+                  quantity > 0 && (
+                    <div key={unit} className="flex justify-between items-center text-sm">
+                      <span className="text-gray-700">{unit}</span>
+                      <span className="font-semibold text-blue-600">{quantity} phiếu</span>
+                    </div>
+                  )
+                ))}
+                <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Chi tiết theo loại công việc OT
+                </p>
+                {Object.entries(unitBreakdownOT).map(([unit, quantity]) => (
                   quantity > 0 && (
                     <div key={unit} className="flex justify-between items-center text-sm">
                       <span className="text-gray-700">{unit}</span>

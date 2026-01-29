@@ -92,6 +92,7 @@ const AttendanceDetailModal = ({
                     <th className="p-3 text-center font-semibold">Giờ ra</th>
                     <th className="p-3 text-center font-semibold">Giờ làm</th>
                     <th className="p-3 text-center font-semibold">Số lượng</th>
+                    <th className="p-3 text-center font-semibold">Số lượng OT</th>
                     <th className="p-3 text-center font-semibold">Đơn vị</th>
                     <th className="p-3 text-center font-semibold">Trạng thái</th>
                   </tr>
@@ -135,6 +136,9 @@ const AttendanceDetailModal = ({
                         </td>
                         <td className="p-3 text-center font-semibold text-purple-600">
                           {record.productQuantity || 0}
+                        </td>
+                        <td className="p-3 text-center font-semibold text-purple-600">
+                          {record.productQuantityOT || 0}
                         </td>
                         <td className="p-3 text-center text-gray-600">
                           {record.unit || "—"}
